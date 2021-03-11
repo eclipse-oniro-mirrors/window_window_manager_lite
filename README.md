@@ -1,39 +1,59 @@
-# graphic_wms
+# WMS<a name="EN-US_TOPIC_0000001122925147"></a>
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+-   [Introduction](#section11660541593)
+-   [Directory Structure](#section161941989596)
+-   [Compilation and Building](#section137768191623)
+-   [Description](#section1312121216216)
+    -   [Usage](#section129654513264)
 
-#### 软件架构
-软件架构说明
+-   [Repositories Involved](#section1371113476307)
 
+## Introduction<a name="section11660541593"></a>
 
-#### 安装教程
+The graphics service uses the client/server \(C/S\) architecture and is divided into two sub-services: Window Manager Service \(WMS\) and Input Manager Service \(IMS\). The application calls the APIs provided by the client to obtain the window status and process events. The server interacts with the hardware to implement display and input event distribution.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+-   WMS: Manages and combines windows of different applications in a unified manner. Each window is bound to a  **RootView**  object.
+-   IMS: Connects to the underlying input event driver framework to monitor and distribute input events.
 
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+**Figure  1** <a name="fig163546295165"></a>  
 
 
-#### 特技
+![](figures/en-us_image_0000001127903103.png)
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+## Directory Structure<a name="section161941989596"></a>
+
+```
+/foundation/graphic/wms
+├── frameworks      # Client
+│   ├── ims         # Input event management service client
+│   └── wms         # Window management service client
+├── interfaces      # APIs
+│   ├── innerkits   # APIs between modules
+├── services        # Server
+│   ├── ims         # Input event management service
+│   └── wms         # Window management service
+└── test            # Test code
+```
+
+## Compilation and Building<a name="section137768191623"></a>
+
+```
+# Generate the wms_server and libwms_client.so files in the out directory of the product folder through GN compilation.
+hb build lite_wms
+```
+
+## Description<a name="section1312121216216"></a>
+
+### Usage<a name="section129654513264"></a>
+
+-   WMS provides methods to display various UI components, send event notifications, and process various events. For details, see the related source code.
+-   **test/sample\_window**  provides the unit testing for each WMS API. Refer to it for the usage of WMS.
+
+## Repositories Involved<a name="section1371113476307"></a>
+
+/hmf/graphic/surface
+
+/hmf/graphic/ui
+
+/hmf/graphic/utils
+
