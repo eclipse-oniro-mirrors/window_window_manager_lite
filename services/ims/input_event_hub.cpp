@@ -17,9 +17,11 @@
 #include "graphic_log.h"
 
 namespace OHOS {
+namespace {
 const uint32_t TOUCH_DEV_ID = 1;
 const uint32_t MOUSE_DEV_ID = 2;
 const uint32_t UNKNOW_DEV_ID = 32;
+}
 IInputInterface* InputEventHub::inputInterface_ = nullptr;
 InputReportEventCb InputEventHub::callback_ = { 0 };
 InputEventHub::ReadCallback InputEventHub::readCallback_ = nullptr;
