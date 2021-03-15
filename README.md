@@ -51,9 +51,10 @@ hb build lite_wms
 
 ## Repositories Involved<a name="section1371113476307"></a>
 
-/hmf/graphic/surface
+[Graphic subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/graphics-subsystem.md)
 
-/hmf/graphic/ui
+[graphic_surface](https://gitee.com/openharmony/graphic_surface/blob/master/README.md)
 
-/hmf/graphic/utils
+[graphic_ui](https://gitee.com/openharmony/graphic_ui/blob/master/README.md)
 
+[graphic_utils](https://gitee.com/openharmony/graphic_utils/blob/master/README.md)
