@@ -51,9 +51,10 @@ hb build lite_wms
 
 ## 相关仓<a name="section1371113476307"></a>
 
-/hmf/graphic/surface
+[图形子系统](https://gitee.com/openharmony/docs/blob/master/zh-cn/readme/%E5%9B%BE%E5%BD%A2%E5%AD%90%E7%B3%BB%E7%BB%9F.md)
 
-/hmf/graphic/ui
+[graphic_surface](https://gitee.com/openharmony/graphic_surface/blob/master/README_zh.md)
 
-/hmf/graphic/utils
+[graphic_ui](https://gitee.com/openharmony/graphic_ui/blob/master/README_zh.md)
 
+[graphic_utils](https://gitee.com/openharmony/graphic_utils/blob/master/README_zh.md)
