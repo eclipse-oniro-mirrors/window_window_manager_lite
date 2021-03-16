@@ -14,7 +14,7 @@
  */
 
 #include "input_event_distributer.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 
 namespace OHOS {
 void InputEventDistributer::Distribute(const RawEvent* events, int32_t size)

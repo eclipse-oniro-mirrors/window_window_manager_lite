@@ -17,7 +17,7 @@
 #define GRAPHIC_LITE_INPUT_EVENT_DISTRIBUTER_H
 
 #include <set>
-#include "input_event_info.h"
+#include "gfx_utils/input_event_info.h"
 
 namespace OHOS {
 /**

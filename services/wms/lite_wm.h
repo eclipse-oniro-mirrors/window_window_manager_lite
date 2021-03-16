@@ -20,11 +20,11 @@
 
 #include "surface.h"
 
-#include "geometry2d.h"
+#include "gfx_utils/geometry2d.h"
 #include "graphic_locker.h"
 #include "hals/hi_fbdev.h"
 #include "input_manager_service.h"
-#include "list.h"
+#include "gfx_utils/list.h"
 
 #include "lite_win.h"
 

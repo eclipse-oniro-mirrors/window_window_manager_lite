@@ -14,7 +14,7 @@
  */
 
 #include "lite_proxy_window.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 #include "surface.h"
 
 namespace OHOS {

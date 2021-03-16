@@ -16,7 +16,7 @@
 #ifndef GRAPHIC_LITE_ISURFACE_H
 #define GRAPHIC_LITE_ISURFACE_H
 
-#include "geometry2d.h"
+#include "gfx_utils/geometry2d.h"
 
 namespace OHOS {
 /**

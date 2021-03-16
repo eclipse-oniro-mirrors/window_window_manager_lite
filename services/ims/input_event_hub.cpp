@@ -14,7 +14,7 @@
  */
 
 #include "input_event_hub.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 
 namespace OHOS {
 namespace {

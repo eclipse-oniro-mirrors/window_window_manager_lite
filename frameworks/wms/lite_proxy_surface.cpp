@@ -14,7 +14,7 @@
  */
 
 #include "lite_proxy_surface.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 
 namespace OHOS {
 LiteProxySurface::LiteProxySurface(Surface* surface)

@@ -14,7 +14,7 @@
  */
 
 #include "input_event_listener_proxy.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 #include "samgr_lite.h"
 
 namespace OHOS {

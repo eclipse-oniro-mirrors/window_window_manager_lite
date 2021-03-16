@@ -14,10 +14,10 @@
  */
 
 #include "lite_wm_requestor.h"
-#include "graphic_log.h"
-#include "input_event_info.h"
+#include "gfx_utils/graphic_log.h"
+#include "gfx_utils/input_event_info.h"
 #include "lite_wms_client.h"
-#include "pixel_format_utils.h"
+#include "gfx_utils/pixel_format_utils.h"
 #include "surface_impl.h"
 
 namespace OHOS {

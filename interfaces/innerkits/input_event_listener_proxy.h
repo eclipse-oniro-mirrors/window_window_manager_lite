@@ -18,7 +18,7 @@
 
 #include <iproxy_client.h>
 #include "liteipc_adapter.h"
-#include "input_event_info.h"
+#include "gfx_utils/input_event_info.h"
 
 namespace OHOS {
 class InputEventListenerProxy {

@@ -16,7 +16,7 @@
 #ifndef GRAPHIC_LITE_LITE_WIN_REQUESTOR_H
 #define GRAPHIC_LITE_LITE_WIN_REQUESTOR_H
 
-#include "geometry2d.h"
+#include "gfx_utils/geometry2d.h"
 #include <iproxy_client.h>
 #include "surface.h"
 
