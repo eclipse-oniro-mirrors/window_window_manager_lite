@@ -17,9 +17,9 @@
 #define GRAPHIC_LITE_IWINDOWS_MANAGER_H
 
 #include "iwindow.h"
-#include "geometry2d.h"
-#include "input_event_info.h"
-#include "list.h"
+#include "gfx_utils/geometry2d.h"
+#include "gfx_utils/input_event_info.h"
+#include "gfx_utils/list.h"
 
 namespace OHOS {
 /**

@@ -24,7 +24,7 @@
 #include "font/ui_font.h"
 #include "font/ui_font_vector.h"
 #include "graphic_config.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 #include "window/window.h"
 
 #include <unistd.h>

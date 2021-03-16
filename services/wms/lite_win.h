@@ -19,8 +19,8 @@
 #include <pthread.h>
 #include "liteipc_adapter.h"
 #include "serializer.h"
-#include "color.h"
-#include "geometry2d.h"
+#include "gfx_utils/color.h"
+#include "gfx_utils/geometry2d.h"
 #include "isurface.h"
 #include "lite_wm_type.h"
 #include "surface.h"

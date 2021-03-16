@@ -16,10 +16,10 @@
 #include "lite_win.h"
 
 #include "graphic_locker.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 #include "graphic_performance.h"
 #include "hals/gfx_engines.h"
-#include "pixel_format_utils.h"
+#include "gfx_utils/pixel_format_utils.h"
 #include "securec.h"
 
 #include "lite_wm.h"

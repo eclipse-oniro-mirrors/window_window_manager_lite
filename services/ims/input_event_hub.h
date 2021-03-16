@@ -18,7 +18,7 @@
 
 #include <map>
 #include "input-event-codes.h"
-#include "input_event_info.h"
+#include "gfx_utils/input_event_info.h"
 #include "input_manager.h"
 #include "securec.h"
 

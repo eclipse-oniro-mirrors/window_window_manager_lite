@@ -18,7 +18,7 @@
 
 #include "isurface.h"
 #include "lite_wm_type.h"
-#include "geometry2d.h"
+#include "gfx_utils/geometry2d.h"
 
 namespace OHOS {
 /**

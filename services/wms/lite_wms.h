@@ -16,7 +16,7 @@
 #ifndef GRAPHIC_LITE_LITE_WMS_H
 #define GRAPHIC_LITE_LITE_WMS_H
 
-#include "geometry2d.h"
+#include "gfx_utils/geometry2d.h"
 #include "lite_wm_type.h"
 #include "liteipc_adapter.h"
 #include "serializer.h"
