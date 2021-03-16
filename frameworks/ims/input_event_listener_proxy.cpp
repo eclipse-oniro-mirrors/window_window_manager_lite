@@ -81,6 +81,7 @@ bool InputEventListenerProxy::RegisterInputEventListener(RawEventListener* liste
         return false;
     }
     IpcIoPushSvc(&io, &svc);
+    IpcIoPushBool(&io, listener->IsAlwaysInvoke());
     int32_t ret = proxy_->Invoke(proxy_, LITEIMS_CLIENT_REGISTER, &io, NULL, NULL);
     if (ret != 0) {
         GRAPHIC_LOGE("Client register failed, ret=%d", ret);

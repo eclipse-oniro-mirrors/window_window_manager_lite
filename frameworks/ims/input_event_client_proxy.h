@@ -51,10 +51,12 @@ private:
     struct ClientInfo {
         SvcIdentity svc;
         uint32_t cdId;
+        bool alwaysInvoke;
     };
 
     std::map<pid_t, ClientInfo> clientInfoMap_;
     static pthread_mutex_t lock_;
+    int16_t lastState_ = 0;
 
     InputEventClientProxy(const InputEventClientProxy&) = delete;
     InputEventClientProxy& operator=(const InputEventClientProxy&) = delete;

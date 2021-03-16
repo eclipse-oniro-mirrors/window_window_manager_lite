@@ -31,7 +31,21 @@ public:
 
     class RawEventListener {
     public:
+        RawEventListener() : alwaysInvoke_(false) {}
+        virtual ~RawEventListener() {}
+
+        void EnableAlwaysInvoke(bool alwaysInvoke)
+        {
+            alwaysInvoke_ = alwaysInvoke;
+        }
+
+        bool IsAlwaysInvoke()
+        {
+            return alwaysInvoke_;
+        }
         virtual void OnRawEvent(const RawEvent& event) = 0;
+    protected:
+        bool alwaysInvoke_;        
     };
 
     bool RegisterInputEventListener(RawEventListener* listener);
