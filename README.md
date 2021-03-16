@@ -53,6 +53,8 @@ hb build lite_wms
 
 [Graphic subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/graphics-subsystem.md)
 
+**graphic_wms**
+
 [graphic_surface](https://gitee.com/openharmony/graphic_surface/blob/master/README.md)
 
 [graphic_ui](https://gitee.com/openharmony/graphic_ui/blob/master/README.md)
