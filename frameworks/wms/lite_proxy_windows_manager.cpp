@@ -15,8 +15,8 @@
 
 #include "lite_proxy_windows_manager.h"
 
-#include "color.h"
-#include "graphic_log.h"
+#include "gfx_utils/color.h"
+#include "gfx_utils/graphic_log.h"
 #include "lite_wm_requestor.h"
 #include "lite_wms_client.h"
 

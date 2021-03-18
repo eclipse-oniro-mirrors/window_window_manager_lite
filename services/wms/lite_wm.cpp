@@ -15,9 +15,9 @@
 
 #include "lite_wm.h"
 
-#include "color.h"
-#include "graphic_log.h"
-#include "pixel_format_utils.h"
+#include "gfx_utils/color.h"
+#include "gfx_utils/graphic_log.h"
+#include "gfx_utils/pixel_format_utils.h"
 
 namespace OHOS {
 namespace {

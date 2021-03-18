@@ -16,8 +16,8 @@
 #ifndef GRAPHIC_LITE_LITE_WM_TYPE_H
 #define GRAPHIC_LITE_LITE_WM_TYPE_H
 
-#include "geometry2d.h"
-#include "pixel_format_utils.h"
+#include "gfx_utils/geometry2d.h"
+#include "gfx_utils/pixel_format_utils.h"
 
 namespace OHOS {
 struct LiteWinConfig {
