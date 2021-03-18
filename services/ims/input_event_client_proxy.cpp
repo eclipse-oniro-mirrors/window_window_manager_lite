@@ -44,6 +44,7 @@ void InputEventClientProxy::AddListener(const void* origin, IpcIo* req, IpcIo* r
     }
     pid_t pid = GetCallingPid(origin);
     SvcIdentity* sid = IpcIoPopSvc(req);
+    bool alwaysInvoke = IpcIoPopBool(req);
     if (sid == nullptr) {
         GRAPHIC_LOGE("Pop Svc failed.");
         return;
@@ -59,7 +60,7 @@ void InputEventClientProxy::AddListener(const void* origin, IpcIo* req, IpcIo* r
         GRAPHIC_LOGE("Register death callback failed!");
         return;
     }
-    struct ClientInfo clientInfo = { svc, cbId };
+    struct ClientInfo clientInfo = { svc, cbId, alwaysInvoke };
     pthread_mutex_lock(&lock_);
     clientInfoMap_.insert(std::make_pair(pid, clientInfo));
     pthread_mutex_unlock(&lock_);
@@ -97,8 +98,11 @@ void InputEventClientProxy::OnRawEvent(const RawEvent& event)
     pthread_mutex_lock(&lock_);
     std::map<pid_t, ClientInfo>::iterator it;
     for (it = clientInfoMap_.begin(); it != clientInfoMap_.end(); it++) {
-        SendRequest(nullptr, it->second.svc, 0, &io, nullptr, LITEIPC_FLAG_ONEWAY, nullptr);
+        if (it->second.alwaysInvoke || (event.state != lastState_)) {
+            SendRequest(nullptr, it->second.svc, 0, &io, nullptr, LITEIPC_FLAG_ONEWAY, nullptr);
+        }
     }
+    lastState_ = event.state;
     pthread_mutex_unlock(&lock_);
 }
 } // namespace OHOS
