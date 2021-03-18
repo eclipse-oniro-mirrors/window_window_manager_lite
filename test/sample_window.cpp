@@ -23,8 +23,8 @@
 #include "dock/screen_device_proxy.h"
 #include "font/ui_font.h"
 #include "font/ui_font_vector.h"
-#include "graphic_config.h"
 #include "gfx_utils/graphic_log.h"
+#include "graphic_config.h"
 #include "window/window.h"
 
 #include <unistd.h>
