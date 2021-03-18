@@ -17,12 +17,13 @@
 #define GRAPHIC_LITE_LITE_WIN_H
 
 #include <pthread.h>
-#include "liteipc_adapter.h"
-#include "serializer.h"
+
 #include "gfx_utils/color.h"
 #include "gfx_utils/geometry2d.h"
 #include "isurface.h"
 #include "lite_wm_type.h"
+#include "liteipc_adapter.h"
+#include "serializer.h"
 #include "surface.h"
 
 namespace OHOS {
