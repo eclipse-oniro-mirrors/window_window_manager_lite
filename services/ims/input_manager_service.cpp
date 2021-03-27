@@ -15,7 +15,7 @@
 
 #include "input_manager_service.h"
 
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 
 namespace OHOS {
 InputEventHub* InputManagerService::hub_ = nullptr;

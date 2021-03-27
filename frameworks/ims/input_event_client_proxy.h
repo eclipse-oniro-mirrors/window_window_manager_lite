@@ -17,7 +17,7 @@
 #define GRAPHIC_LITE_IMS_LISTERNER_PROXY_H
 
 #include "input_event_distributer.h"
-#include "input_event_info.h"
+#include "gfx_utils/input_event_info.h"
 #include "input_manager_service.h"
 #include "liteipc_adapter.h"
 #include "serializer.h"

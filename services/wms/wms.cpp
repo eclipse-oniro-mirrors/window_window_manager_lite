@@ -14,7 +14,7 @@
  */
 
 #include "hals/gfx_engines.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 #include "graphic_performance.h"
 #include "hals/hi_fbdev.h"
 #include "input_manager_service.h"

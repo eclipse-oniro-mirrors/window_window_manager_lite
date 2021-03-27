@@ -17,8 +17,8 @@
 #define GRAPHIC_LITE_INPUT_EVENT_HUB_H
 
 #include <map>
+#include "gfx_utils/input_event_info.h"
 #include "input-event-codes.h"
-#include "input_event_info.h"
 #include "input_manager.h"
 #include "securec.h"
 

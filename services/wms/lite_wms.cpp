@@ -14,7 +14,7 @@
  */
 
 #include "lite_wms.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 #include "lite_wm.h"
 #include "lite_wm_type.h"
 #include "surface.h"

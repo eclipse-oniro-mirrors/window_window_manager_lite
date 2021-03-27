@@ -15,13 +15,13 @@
 
 #include <unistd.h>
 
-#include "font/ui_font_vector.h"
 #include "common/graphic_startup.h"
 #include "common/screen.h"
 #include "common/task_manager.h"
 #include "dock/screen_device_proxy.h"
+#include "font/ui_font_vector.h"
+#include "gfx_utils/graphic_log.h"
 #include "graphic_config.h"
-#include "graphic_log.h"
 #include "window/window.h"
 
 extern void RunApp();

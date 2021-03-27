@@ -17,7 +17,7 @@
 #include <ohos_init.h>
 
 #include "feature.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 #include "iproxy_client.h"
 #include "iproxy_server.h"
 #include "iunknown.h"

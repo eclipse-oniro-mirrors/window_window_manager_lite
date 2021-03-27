@@ -14,7 +14,7 @@
  */
 
 #include "lite_win_requestor.h"
-#include "graphic_log.h"
+#include "gfx_utils/graphic_log.h"
 #include "lite_wm_type.h"
 #include "lite_wms_client.h"
 #include "surface_impl.h"
