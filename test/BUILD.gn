@@ -15,6 +15,7 @@ import("//build/lite/config/subsystem/graphic/config.gni")
 group("lite_wms_test") {
   if (ohos_build_type == "debug") {
     deps = [
+      ":sample_auto_ui",
       ":sample_ui",
       ":sample_window",
     ]
@@ -39,6 +40,26 @@ if (ohos_build_type == "debug") {
       "//foundation/graphic/utils:lite_graphic_hals",
       "//foundation/graphic/wms:wms_client",
     ]
+    output_dir = "$root_out_dir/dev_tools"
+  }
+
+  executable("sample_auto_ui") {
+    sources = [ "sample_ui.cpp" ]
+    include_dirs = [
+      "//foundation/graphic/ui/frameworks",
+      "//third_party/freetype/include",
+    ]
+    ldflags = [
+      "-lstdc++",
+      "-lpthread",
+      "-Wl,-rpath-link=$ohos_root_path/$root_out_dir",
+    ]
+    deps = [
+      "//foundation/graphic/ui/test/framework:auto_framework",
+      "//foundation/graphic/utils:lite_graphic_hals",
+      "//foundation/graphic/wms:wms_client",
+    ]
+
     output_dir = "$root_out_dir/dev_tools"
   }
 
