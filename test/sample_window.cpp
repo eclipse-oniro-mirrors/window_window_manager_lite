@@ -221,7 +221,6 @@ void TestWindow()
 
     auto imageAnimCallback = new ImageAnimatorCallbackDemo();
     Animator* imageAnimator = new Animator(imageAnimCallback, g_rootView1, 0, true);
-    AnimatorManager::GetInstance()->Add(imageAnimator);
     imageAnimator->Start();
 
     CreateDefaultWindow(g_rootView1, 0, 50);    // 50: y
