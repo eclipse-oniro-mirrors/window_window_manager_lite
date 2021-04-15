@@ -258,11 +258,18 @@ static void InitHal()
     ScreenDeviceProxy::GetInstance()->SetDevice(display);
 }
 
-static uint32_t g_fontPsramBaseAddr[MIN_FONT_PSRAM_LENGTH / 4];
+static uint32_t g_fontMemBaseAddr[MIN_FONT_PSRAM_LENGTH / 4];
+#if ENABLE_ICU
+static uint8_t g_icuMemBaseAddr[OHOS::SHAPING_WORD_DICT_LENGTH];
+#endif
 static void InitFontEngine()
 {
-    GraphicStartUp::InitFontEngine(reinterpret_cast<uintptr_t>(g_fontPsramBaseAddr), MIN_FONT_PSRAM_LENGTH,
+    GraphicStartUp::InitFontEngine(reinterpret_cast<uintptr_t>(g_fontMemBaseAddr), MIN_FONT_PSRAM_LENGTH,
                                    VECTOR_FONT_DIR, DEFAULT_VECTOR_FONT_FILENAME);
+#if ENABLE_ICU
+    GraphicStartUp::InitLineBreakEngine(reinterpret_cast<uintptr_t>(g_icuMemBaseAddr), SHAPING_WORD_DICT_LENGTH,
+                                        VECTOR_FONT_DIR, DEFAULT_LINE_BREAK_RULE_FILENAME);
+#endif
 }
 } // namespace OHOS
 
