@@ -27,6 +27,7 @@ if (ohos_build_type == "debug") {
     sources = [ "sample_ui.cpp" ]
     include_dirs = [
       "//foundation/graphic/ui/frameworks",
+      "//foundation/graphic/ui/test/framework",
       "//third_party/freetype/include",
     ]
     ldflags = [
@@ -47,6 +48,7 @@ if (ohos_build_type == "debug") {
     sources = [ "sample_ui.cpp" ]
     include_dirs = [
       "//foundation/graphic/ui/frameworks",
+      "//foundation/graphic/ui/test/framework",
       "//third_party/freetype/include",
     ]
     ldflags = [
@@ -64,9 +66,13 @@ if (ohos_build_type == "debug") {
   }
 
   executable("sample_window") {
-    sources = [ "sample_window.cpp" ]
+    sources = [
+      "sample_window.cpp",
+      "//foundation/graphic/ui/test/framework/common/ui_text_language.cpp",
+    ]
     include_dirs = [
       "//foundation/graphic/ui/frameworks",
+      "//foundation/graphic/ui/test/framework",
       "//foundation/graphic/surface/interfaces/kits",
       "//third_party/freetype/include",
     ]
