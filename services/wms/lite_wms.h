@@ -29,11 +29,7 @@ public:
         SvcIdentity sid;
     };
 
-    static LiteWMS* GetInstance()
-    {
-        static LiteWMS wms;
-        return &wms;
-    }
+    static LiteWMS* GetInstance();
 
     static void WMSRequestHandle(int funcId, void* origin, IpcIo* req, IpcIo* reply);
 

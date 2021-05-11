@@ -19,6 +19,12 @@
 #include "samgr_lite.h"
 
 namespace OHOS {
+LiteWMSClient* LiteWMSClient::GetInstance()
+{
+    static LiteWMSClient client;
+    return &client;
+}
+
 LiteWMSClient::~LiteWMSClient()
 {
     if (proxy_ != nullptr) {

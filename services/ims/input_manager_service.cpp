@@ -27,6 +27,12 @@ pthread_mutex_t InputManagerService::lock_;
 pthread_cond_t InputManagerService::nonEmpty_;
 pthread_cond_t InputManagerService::nonFull_;
 
+InputManagerService* InputManagerService::GetInstance()
+{
+    static InputManagerService instance;
+    return &instance;
+}
+
 void InputManagerService::Run()
 {
     hub_ = InputEventHub::GetInstance();

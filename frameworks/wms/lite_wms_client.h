@@ -26,11 +26,7 @@ static const int32_t DEFAULT_IPC_SIZE = 100;
 
 class LiteWMSClient {
 public:
-    static LiteWMSClient* GetInstance()
-    {
-        static LiteWMSClient client;
-        return &client;
-    }
+    static LiteWMSClient* GetInstance();
 
     bool InitLiteWMSClient();
 

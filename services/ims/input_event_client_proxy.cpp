@@ -19,6 +19,12 @@
 
 namespace OHOS {
 pthread_mutex_t InputEventClientProxy::lock_;
+InputEventClientProxy* InputEventClientProxy::GetInstance()
+{
+    static InputEventClientProxy ims;
+    return &ims;
+}
+
 void InputEventClientProxy::ClientRequestHandle(int funcId, void* origin, IpcIo* req, IpcIo* reply)
 {
     switch (funcId) {

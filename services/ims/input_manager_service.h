@@ -30,11 +30,7 @@ public:
      *
      * @returns instance of input manager service
      */
-    static InputManagerService* GetInstance()
-    {
-        static InputManagerService instance;
-        return &instance;
-    }
+    static InputManagerService* GetInstance();
 
     /**
      * Init input manager service.

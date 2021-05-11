@@ -44,11 +44,7 @@ struct CursorInfo {
 
 class LiteWM : public InputEventDistributer::RawEventListener {
 public:
-    static LiteWM* GetInstance()
-    {
-        static LiteWM liteWm;
-        return &liteWm;
-    }
+    static LiteWM* GetInstance();
 
     void MainTaskHandler();
 

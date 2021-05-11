@@ -124,6 +124,12 @@ LiteWM::~LiteWM()
 {
 }
 
+LiteWM* LiteWM::GetInstance()
+{
+    static LiteWM liteWm;
+    return &liteWm;
+}
+
 void LiteWM::MainTaskHandler()
 {
     if (layerData_ == nullptr || layerData_->virAddr == nullptr) {

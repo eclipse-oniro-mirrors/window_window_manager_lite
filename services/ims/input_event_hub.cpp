@@ -26,6 +26,12 @@ IInputInterface* InputEventHub::inputInterface_ = nullptr;
 InputReportEventCb InputEventHub::callback_ = { 0 };
 InputEventHub::ReadCallback InputEventHub::readCallback_ = nullptr;
 
+InputEventHub* InputEventHub::GetInstance()
+{
+    static InputEventHub instance;
+    return &instance;
+}
+
 InputEventHub::InputEventHub()
 {
     for (uint8_t i = 0; i < MAX_INPUT_DEVICE_NUM; i++) {

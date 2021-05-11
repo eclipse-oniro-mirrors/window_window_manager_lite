@@ -21,6 +21,12 @@
 #include "surface_impl.h"
 
 namespace OHOS {
+LiteWMS* LiteWMS::GetInstance()
+{
+    static LiteWMS wms;
+    return &wms;
+}
+
 void LiteWMS::WMSRequestHandle(int funcId, void* origin, IpcIo* req, IpcIo* reply)
 {
     switch (funcId) {
