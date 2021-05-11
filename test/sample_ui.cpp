@@ -18,7 +18,6 @@
 #include "common/graphic_startup.h"
 #include "common/screen.h"
 #include "common/task_manager.h"
-#include "dock/screen_device_proxy.h"
 #include "font/ui_font_vector.h"
 #include "gfx_utils/graphic_log.h"
 #include "graphic_config.h"
@@ -42,15 +41,6 @@ void TestAPP()
     window->Show();
 }
 
-static void InitHal()
-{
-    ScreenDevice* display = new ScreenDevice();
-    ScreenDeviceProxy::GetInstance()->SetDevice(display);
-    ScreenDeviceProxy::GetInstance()->SetScreenSize(HORIZONTAL_RESOLUTION, VERTICAL_RESOLUTION);
-    ScreenDeviceProxy::GetInstance()->SetAnimatorbuffer(reinterpret_cast<uint8_t*>(g_animaterBuffer), ARGB8888,
-                                                        HORIZONTAL_RESOLUTION);
-}
-
 static uint32_t g_fontMemBaseAddr[MIN_FONT_PSRAM_LENGTH / 4];
 #if ENABLE_ICU
 static uint8_t g_icuMemBaseAddr[OHOS::SHAPING_WORD_DICT_LENGTH];
@@ -70,7 +60,6 @@ static void InitFontEngine()
 int main(int argc, char* argv[])
 {
     OHOS::GraphicStartUp::Init();
-    OHOS::InitHal();
     OHOS::InitFontEngine();
     OHOS::TestAPP();
     while (1) {
