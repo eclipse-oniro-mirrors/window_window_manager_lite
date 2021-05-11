@@ -20,7 +20,6 @@
 #include "components/ui_button.h"
 #include "components/ui_image_view.h"
 #include "components/ui_label.h"
-#include "dock/screen_device_proxy.h"
 #include "font/ui_font.h"
 #if ENABLE_VECTOR_FONT
 #include "font/ui_font_vector.h"
@@ -256,12 +255,6 @@ void TestWindowNumLimit()
     }
 }
 
-static void InitHal()
-{
-    ScreenDevice* display = new ScreenDevice();
-    ScreenDeviceProxy::GetInstance()->SetDevice(display);
-}
-
 static uint32_t g_fontMemBaseAddr[MIN_FONT_PSRAM_LENGTH / 4];
 #if ENABLE_ICU
 static uint8_t g_icuMemBaseAddr[OHOS::SHAPING_WORD_DICT_LENGTH];
@@ -288,7 +281,6 @@ static void InitFontEngine()
 int main(int argc, char* argv[])
 {
     OHOS::GraphicStartUp::Init();
-    OHOS::InitHal();
     OHOS::InitFontEngine();
     OHOS::TestWindow();
     while (1) {
