@@ -18,7 +18,12 @@
 #include "common/graphic_startup.h"
 #include "common/screen.h"
 #include "common/task_manager.h"
+#if ENABLE_VECTOR_FONT
 #include "font/ui_font_vector.h"
+#else
+#include "common/ui_text_language.h"
+#include "font/ui_font_bitmap.h"
+#endif
 #include "gfx_utils/graphic_log.h"
 #include "graphic_config.h"
 #include "window/window.h"
@@ -48,8 +53,16 @@ static uint8_t g_icuMemBaseAddr[OHOS::SHAPING_WORD_DICT_LENGTH];
 
 static void InitFontEngine()
 {
+#if ENABLE_VECTOR_FONT
     GraphicStartUp::InitFontEngine(reinterpret_cast<uintptr_t>(g_fontMemBaseAddr), MIN_FONT_PSRAM_LENGTH,
                                    VECTOR_FONT_DIR, DEFAULT_VECTOR_FONT_FILENAME);
+#else
+    BitmapFontInit();
+    const char* dPath = "/user/data/font.bin";
+    GraphicStartUp::InitFontEngine(reinterpret_cast<uintptr_t>(g_fontMemBaseAddr), MIN_FONT_PSRAM_LENGTH,
+                                   dPath, nullptr);
+#endif
+
 #if ENABLE_ICU
     GraphicStartUp::InitLineBreakEngine(reinterpret_cast<uintptr_t>(g_icuMemBaseAddr), SHAPING_WORD_DICT_LENGTH,
                                         VECTOR_FONT_DIR, DEFAULT_LINE_BREAK_RULE_FILENAME);
