@@ -23,11 +23,7 @@
 namespace OHOS {
 class InputEventListenerProxy {
 public:
-    static InputEventListenerProxy* GetInstance()
-    {
-        static InputEventListenerProxy client;
-        return &client;
-    }
+    static InputEventListenerProxy* GetInstance();
 
     class RawEventListener {
     public:

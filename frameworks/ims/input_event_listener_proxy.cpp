@@ -27,6 +27,12 @@ InputEventListenerProxy::~InputEventListenerProxy()
     }
 }
 
+InputEventListenerProxy* InputEventListenerProxy::GetInstance()
+{
+    static InputEventListenerProxy client;
+    return &client;
+}
+
 bool InputEventListenerProxy::GetIClientProxy()
 {
     if (proxy_ == nullptr) {

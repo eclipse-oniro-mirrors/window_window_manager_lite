@@ -26,12 +26,7 @@
 namespace OHOS {
 class LiteWMRequestor : public IBufferConsumerListener {
 public:
-    static LiteWMRequestor* GetInstance()
-    {
-        static LiteWMRequestor requestor;
-        return &requestor;
-    }
-
+    static LiteWMRequestor* GetInstance();
     static int Callback(void* owner, int code, IpcIo* reply);
     static int32_t WmsMsgHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg);
     static int32_t SurfaceRequestHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg);

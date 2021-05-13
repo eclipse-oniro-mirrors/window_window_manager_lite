@@ -29,11 +29,7 @@ namespace OHOS {
 class InputEventHub {
 using ReadCallback = void (*)(const RawEvent*);
 public:
-    static InputEventHub* GetInstance()
-    {
-        static InputEventHub instance;
-        return &instance;
-    }
+    static InputEventHub* GetInstance();
 
     /**
      * @brief SetUp hub. This operation will open all input devices.

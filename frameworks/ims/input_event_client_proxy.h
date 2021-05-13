@@ -28,11 +28,7 @@ namespace OHOS {
 #define MAX_CLIENT_SIZE 1
 class InputEventClientProxy : public InputEventDistributer::RawEventListener {
 public:
-    static InputEventClientProxy* GetInstance()
-    {
-        static InputEventClientProxy ims;
-        return &ims;
-    }
+    static InputEventClientProxy* GetInstance();
 
     static void ClientRequestHandle(int funcId, void* origin, IpcIo* req, IpcIo* reply);
 

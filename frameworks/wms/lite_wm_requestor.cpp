@@ -21,6 +21,12 @@
 #include "surface_impl.h"
 
 namespace OHOS {
+LiteWMRequestor* LiteWMRequestor::GetInstance()
+{
+    static LiteWMRequestor requestor;
+    return &requestor;
+}
+
 LiteWMRequestor::LiteWMRequestor() : proxy_(nullptr), listener_(nullptr), surface_(nullptr), sid_({}), layerInfo_({})
 {
     proxy_ = LiteWMSClient::GetInstance()->GetClientProxy();
