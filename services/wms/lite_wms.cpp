@@ -82,7 +82,7 @@ int32_t LiteWMS::SurfaceRequestHandler(const IpcContext* context, void* ipcMsg, 
 {
     uint32_t code;
     (void)GetCode(ipcMsg, &code);
-    LiteWindow* window = (LiteWindow*)arg;
+    LiteWindow* window = reinterpret_cast<LiteWindow*>(arg);
     if (code == 0) {
         GRAPHIC_LOGI("requestBuffer");
         window->UpdateBackBuf();
