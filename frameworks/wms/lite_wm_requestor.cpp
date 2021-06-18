@@ -46,7 +46,7 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
                 break;
             }
             int32_t id = IpcIoPopInt32(reply);
-            GRAPHIC_LOGI("CreateWindow, id=%d", id);
+            HILOG_INFO(HILOG_MODULE_GRAPHIC, "CreateWindow, id=%d", id);
             if (id == INVALID_WINDOW_ID) {
                 *requestor = nullptr;
             } else {
@@ -66,7 +66,7 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
         case LiteWMS_Screenshot: {
             int32_t ret = IpcIoPopInt32(reply);
             if (ret != LiteWMS_EOK) {
-                GRAPHIC_LOGW("Screenshot busy!");
+                HILOG_WARN(HILOG_MODULE_GRAPHIC, "Screenshot busy!");
                 LiteWMRequestor::GetInstance()->ScreenShotClearup();
             }
             break;
@@ -100,13 +100,13 @@ void LiteWMRequestor::ClientRegister()
 
     SvcIdentity svc;
     if (RegisterIpcCallback(WmsMsgHandler, 0, IPC_WAIT_FOREVER, &svc, NULL) != LITEIPC_OK) {
-        GRAPHIC_LOGE("RegisterIpcCallback failed.");
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "RegisterIpcCallback failed.");
         return;
     }
     IpcIoPushSvc(&io, &svc);
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_ClientRegister, &io, NULL, Callback);
     if (ret != 0) {
-        GRAPHIC_LOGE("ClientRegister failed, ret=%d", ret);
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "ClientRegister failed, ret=%d", ret);
     }
 }
 
@@ -121,7 +121,7 @@ void LiteWMRequestor::GetLayerInfo()
     para.data = &layerInfo_;
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_GetLayerInfo, &io, &para, Callback);
     if (ret != 0) {
-        GRAPHIC_LOGE("GetLayerInfo failed, ret=%d", ret);
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "GetLayerInfo failed, ret=%d", ret);
     }
 }
 
@@ -138,7 +138,7 @@ LiteWinRequestor* LiteWMRequestor::CreateWindow(const LiteWinConfig& config)
     para.data = &requestor;
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_CreateWindow, &io, &para, Callback);
     if (ret != 0) {
-        GRAPHIC_LOGE("CreateWindow failed, ret=%d", ret);
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "CreateWindow failed, ret=%d", ret);
     }
 
     return requestor;
@@ -153,7 +153,7 @@ void LiteWMRequestor::RemoveWindow(int32_t id)
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_RemoveWindow, &io, NULL, Callback);
     if (ret != 0) {
-        GRAPHIC_LOGE("RemoveWindow failed, ret=%d", ret);
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "RemoveWindow failed, ret=%d", ret);
     }
 }
 
@@ -190,7 +190,7 @@ void LiteWMRequestor::ScreenShotClearup()
 
 void LiteWMRequestor::OnBufferAvailable()
 {
-    GRAPHIC_LOGD("OnBufferAvailable");
+    HILOG_DEBUG(HILOG_MODULE_GRAPHIC, "OnBufferAvailable");
     if (surface_ != nullptr) {
         SurfaceBuffer* buffer = surface_->AcquireBuffer();
         if (buffer != nullptr) {
@@ -226,7 +226,7 @@ void LiteWMRequestor::Screenshot()
 
     int32_t ret = RegisterIpcCallback(SurfaceRequestHandler, 0, IPC_WAIT_FOREVER, &sid_, surface_);
     if (ret != LITEIPC_OK) {
-        GRAPHIC_LOGE("RegisterIpcCallback failed.");
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "RegisterIpcCallback failed.");
         delete surface_;
         surface_ = nullptr;
         return;
@@ -240,7 +240,7 @@ void LiteWMRequestor::Screenshot()
     para.funcId = LiteWMS_Screenshot;
     ret = proxy_->Invoke(proxy_, LiteWMS_Screenshot, &io, &para, Callback);
     if (ret != 0) {
-        GRAPHIC_LOGE("Screenshot failed, ret=%d", ret);
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Screenshot failed, ret=%d", ret);
     }
 }
 } // namespace OHOS

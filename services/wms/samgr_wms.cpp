@@ -47,14 +47,14 @@ static BOOL Initialize(Service* service, Identity identity)
 {
     WMSService* example = reinterpret_cast<WMSService*>(service);
     example->identity = identity;
-    GRAPHIC_LOGI("Initialize(%s)! Identity<%d, %d, %p>", SERVICE_NAME,
+    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Initialize(%s)! Identity<%d, %d, %p>", SERVICE_NAME,
         identity.serviceId, identity.featureId, identity.queueId);
     return TRUE;
 }
 
 static BOOL MessageHandle(Service* service, Request* msg)
 {
-    GRAPHIC_LOGI("MessageHandle(%s)! Request<%d, %d, %p>",
+    HILOG_INFO(HILOG_MODULE_GRAPHIC, "MessageHandle(%s)! Request<%d, %d, %p>",
         service->GetName(service), msg->msgId, msg->msgValue, msg->data);
     return FALSE;
 }
