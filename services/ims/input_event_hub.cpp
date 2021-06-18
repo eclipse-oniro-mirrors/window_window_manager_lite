@@ -23,7 +23,7 @@ const uint32_t MOUSE_DEV_ID = 2;
 const uint32_t UNKNOW_DEV_ID = 32;
 }
 IInputInterface* InputEventHub::inputInterface_ = nullptr;
-InputReportEventCb InputEventHub::callback_ = { 0 };
+InputEventCb InputEventHub::callback_ = { 0 };
 InputEventHub::ReadCallback InputEventHub::readCallback_ = nullptr;
 
 InputEventHub* InputEventHub::GetInstance()
@@ -66,7 +66,7 @@ void InputEventHub::SetUp()
         }
         ret = inputInterface_->iInputManager->OpenInputDevice(mountDevIndex_[i]);
         if (ret == INPUT_SUCCESS && inputInterface_->iInputReporter != nullptr) {
-            callback_.ReportEventPkgCallback = EventCallback;
+            callback_.EventPkgCallback = EventCallback;
             ret = inputInterface_->iInputReporter->RegisterReportCallback(mountDevIndex_[i], &callback_);
             if (ret != INPUT_SUCCESS) {
                 GRAPHIC_LOGE("device dose not exist, can't register callback to it!");
