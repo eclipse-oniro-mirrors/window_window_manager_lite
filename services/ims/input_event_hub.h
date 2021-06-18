@@ -76,7 +76,7 @@ private:
     RawEvent data_;
 
     static IInputInterface* inputInterface_;
-    static InputReportEventCb callback_;
+    static InputEventCb callback_;
     static ReadCallback readCallback_;
 };
 } // namespace OHOS
