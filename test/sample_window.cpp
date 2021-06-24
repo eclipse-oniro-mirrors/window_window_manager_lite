@@ -53,7 +53,7 @@ void CreateDefaultWindow(RootView* rootView, int x, int y)
             window->BindRootView(rootView);
             window->Show();
         } else {
-            GRAPHIC_LOGE("Create window false!");
+            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Create window false!");
         }
     }
 }
@@ -236,7 +236,7 @@ RootView* g_rootViewList[MAX_LIST_NUM];
 void TestWindowNumLimit()
 {
     for (int i = 0; i < MAX_LIST_NUM; i++) {
-        GRAPHIC_LOGI("CreateDefaultWindow, i = %d", i);
+        HILOG_INFO(HILOG_MODULE_GRAPHIC, "CreateDefaultWindow, i = %d", i);
         if (i == 10) { // 10, 9: Delete the tenth window in the 11th loop.
             Window* window = g_rootViewList[9]->GetBoundWindow();
             Window::DestoryWindow(window);

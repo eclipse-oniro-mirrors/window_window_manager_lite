@@ -51,17 +51,17 @@ void InputEventHub::SetUp()
 {
     int32_t ret = GetInputInterface(&inputInterface_);
     if (ret != INPUT_SUCCESS) {
-        GRAPHIC_LOGE("get input driver interface failed!");
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "get input driver interface failed!");
         return;
     }
     uint8_t num = ScanInputDevice();
     if (num == 0) {
-        GRAPHIC_LOGE("There is no device!");
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "There is no device!");
         return;
     }
     for (uint8_t i = 0; i < num; i++) {
         if (inputInterface_ == nullptr || inputInterface_->iInputManager == nullptr) {
-            GRAPHIC_LOGE("input interface or input manager is nullptr, open device failed!");
+            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "input interface or input manager is nullptr, open device failed!");
             return;
         }
         ret = inputInterface_->iInputManager->OpenInputDevice(mountDevIndex_[i]);
@@ -69,7 +69,7 @@ void InputEventHub::SetUp()
             callback_.EventPkgCallback = EventCallback;
             ret = inputInterface_->iInputReporter->RegisterReportCallback(mountDevIndex_[i], &callback_);
             if (ret != INPUT_SUCCESS) {
-                GRAPHIC_LOGE("device dose not exist, can't register callback to it!");
+                HILOG_ERROR(HILOG_MODULE_GRAPHIC, "device dose not exist, can't register callback to it!");
                 return;
             }
             openDev_ = openDev_ | (1 << i);
@@ -85,20 +85,20 @@ void InputEventHub::TearDown()
             continue;
         }
         if (inputInterface_ == nullptr) {
-            GRAPHIC_LOGE("input interface point is nullptr!");
+            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "input interface point is nullptr!");
             return;
         }
         if (inputInterface_->iInputReporter == nullptr || inputInterface_->iInputManager == nullptr) {
-            GRAPHIC_LOGE("input interface or input manager is nullptr, open device failed!");
+            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "input interface or input manager is nullptr, open device failed!");
             return;
         }
         ret = inputInterface_->iInputReporter->UnregisterReportCallback(mountDevIndex_[i]);
         if (ret != INPUT_SUCCESS) {
-            GRAPHIC_LOGE("Unregister callback failed!");
+            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Unregister callback failed!");
         }
         ret  = inputInterface_->iInputManager->CloseInputDevice(mountDevIndex_[i]);
         if (ret != INPUT_SUCCESS) {
-            GRAPHIC_LOGE("Unmount device failed!");
+            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Unmount device failed!");
         }
         openDev_ = openDev_ & ~(1 << i);
     }

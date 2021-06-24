@@ -38,12 +38,12 @@ bool InputEventListenerProxy::GetIClientProxy()
     if (proxy_ == nullptr) {
         IUnknown *iUnknown = SAMGR_GetInstance()->GetDefaultFeatureApi(IMS_SERVICE_NAME);
         if (iUnknown == nullptr) {
-            GRAPHIC_LOGE("iUnknown is NULL");
+            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "iUnknown is NULL");
             return false;
         }
         (void)iUnknown->QueryInterface(iUnknown, CLIENT_PROXY_VER, (void **)&proxy_);
         if (proxy_ == nullptr) {
-            GRAPHIC_LOGE("QueryInterface failed, IClientProxy is empty!");
+            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "QueryInterface failed, IClientProxy is empty!");
             return false;
         }
     }
@@ -58,7 +58,7 @@ int32_t InputEventListenerProxy::ReceiveMsgHandler(const IpcContext* context, vo
     uint32_t size;
     RawEvent* eventTemp = static_cast<RawEvent*>(IpcIoPopFlatObj(io, &size));
     if (eventTemp == nullptr) {
-        GRAPHIC_LOGE("pop raw event failed.");
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "pop raw event failed.");
         return -1;
     }
     RawEvent event = *eventTemp;
@@ -70,12 +70,12 @@ int32_t InputEventListenerProxy::ReceiveMsgHandler(const IpcContext* context, vo
 bool InputEventListenerProxy::RegisterInputEventListener(RawEventListener* listener)
 {
     if (listener == nullptr) {
-        GRAPHIC_LOGE("Input event listener is empty.");
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Input event listener is empty.");
         return false;
     }
 
     if (!GetIClientProxy()) {
-        GRAPHIC_LOGE("Get input event client proxy failed.");
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Get input event client proxy failed.");
         return false;
     }
     IpcIo io;
@@ -83,14 +83,14 @@ bool InputEventListenerProxy::RegisterInputEventListener(RawEventListener* liste
     IpcIoInit(&io, tmpData, IMS_DEFAULT_IPC_SIZE, 1);
     SvcIdentity svc;
     if (RegisterIpcCallback(ReceiveMsgHandler, 0, IPC_WAIT_FOREVER, &svc, NULL) != LITEIPC_OK) {
-        GRAPHIC_LOGE("RegisterIpcCallback failed.");
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "RegisterIpcCallback failed.");
         return false;
     }
     IpcIoPushSvc(&io, &svc);
     IpcIoPushBool(&io, listener->IsAlwaysInvoke());
     int32_t ret = proxy_->Invoke(proxy_, LITEIMS_CLIENT_REGISTER, &io, NULL, NULL);
     if (ret != 0) {
-        GRAPHIC_LOGE("Client register failed, ret=%d", ret);
+        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Client register failed, ret=%d", ret);
         return false;
     }
     listener_ = listener;
