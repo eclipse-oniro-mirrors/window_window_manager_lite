@@ -73,7 +73,7 @@ void LiteWMS::WMSRequestHandle(int funcId, void* origin, IpcIo* req, IpcIo* repl
             LiteWMS::GetInstance()->GetLayerInfo(req, reply);
             break;
         default:
-            HILOG_WARN(HILOG_MODULE_GRAPHIC, "code not support:%d!", funcId);
+            GRAPHIC_LOGW("code not support:%d!", funcId);
             break;
     }
 }
@@ -84,7 +84,7 @@ int32_t LiteWMS::SurfaceRequestHandler(const IpcContext* context, void* ipcMsg, 
     (void)GetCode(ipcMsg, &code);
     LiteWindow* window = reinterpret_cast<LiteWindow*>(arg);
     if (code == 0) {
-        HILOG_INFO(HILOG_MODULE_GRAPHIC, "requestBuffer");
+        GRAPHIC_LOGI("requestBuffer");
         window->UpdateBackBuf();
     }
 
@@ -97,17 +97,17 @@ int32_t LiteWMS::SurfaceRequestHandler(const IpcContext* context, void* ipcMsg, 
 void LiteWMS::GetSurface(IpcIo* req, IpcIo* reply)
 {
     int32_t id = IpcIoPopInt32(req);
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "GetSurface,id=%d", id);
+    GRAPHIC_LOGI("GetSurface,id=%d", id);
     LiteWindow* window = LiteWM::GetInstance()->GetWindowById(id);
     if (window == nullptr) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "window not found, id = %d", id);
+        GRAPHIC_LOGE("window not found, id = %d", id);
         return;
     }
     SvcIdentity svc;
     int32_t ret = RegisterIpcCallback(SurfaceRequestHandler, 0, IPC_WAIT_FOREVER, &svc, window);
     IpcIoPushInt32(reply, ret);
     if (ret != LITEIPC_OK) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "RegisterIpcCallback failed.");
+        GRAPHIC_LOGE("RegisterIpcCallback failed.");
         return;
     }
     window->SetSid(svc);
@@ -116,35 +116,35 @@ void LiteWMS::GetSurface(IpcIo* req, IpcIo* reply)
 
 void LiteWMS::Show(IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Show");
+    GRAPHIC_LOGI("Show");
     int32_t id = IpcIoPopInt32(req);
     LiteWM::GetInstance()->Show(id);
 }
 
 void LiteWMS::Hide(IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Hide");
+    GRAPHIC_LOGI("Hide");
     int32_t id = IpcIoPopInt32(req);
     LiteWM::GetInstance()->Hide(id);
 }
 
 void LiteWMS::RaiseToTop(IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "RaiseToTop");
+    GRAPHIC_LOGI("RaiseToTop");
     int32_t id = IpcIoPopInt32(req);
     LiteWM::GetInstance()->RaiseToTop(id);
 }
 
 void LiteWMS::LowerToBottom(IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "LowerToBottom");
+    GRAPHIC_LOGI("LowerToBottom");
     int32_t id = IpcIoPopInt32(req);
     LiteWM::GetInstance()->LowerToBottom(id);
 }
 
 void LiteWMS::MoveTo(IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "MoveTo");
+    GRAPHIC_LOGI("MoveTo");
     int32_t id = IpcIoPopInt32(req);
     uint32_t x = IpcIoPopUint32(req);
     uint32_t y = IpcIoPopUint32(req);
@@ -153,7 +153,7 @@ void LiteWMS::MoveTo(IpcIo* req, IpcIo* reply)
 
 void LiteWMS::Resize(IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Resize");
+    GRAPHIC_LOGI("Resize");
     int32_t id = IpcIoPopInt32(req);
     uint32_t width = IpcIoPopUint32(req);
     uint32_t height = IpcIoPopUint32(req);
@@ -162,14 +162,14 @@ void LiteWMS::Resize(IpcIo* req, IpcIo* reply)
 
 void LiteWMS::Update(IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Update");
+    GRAPHIC_LOGI("Update");
     int32_t id = IpcIoPopInt32(req);
     LiteWM::GetInstance()->UpdateWindow(id);
 }
 
 void LiteWMS::CreateWindow(const void* origin, IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "CreateWindow");
+    GRAPHIC_LOGI("CreateWindow");
     uint32_t size;
     LiteWinConfig* config = static_cast<LiteWinConfig*>(IpcIoPopFlatObj(req, &size));
     if (config != nullptr) {
@@ -185,7 +185,7 @@ void LiteWMS::CreateWindow(const void* origin, IpcIo* req, IpcIo* reply)
 
 void LiteWMS::RemoveWindow(IpcIo* req, IpcIo* reply)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "RemoveWindow");
+    GRAPHIC_LOGI("RemoveWindow");
     int32_t id = IpcIoPopInt32(req);
     LiteWM::GetInstance()->RemoveWindow(id);
 }
@@ -222,7 +222,7 @@ void LiteWMS::ClientRegister(const void* origin, IpcIo* req, IpcIo* reply)
     sid = nullptr;
 #endif
     if (RegisterDeathCallback(NULL, arg->sid, DeathCallback, arg, &cbId) != LITEIPC_OK) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "RegisterDeathCallback failed!");
+        GRAPHIC_LOGE("RegisterDeathCallback failed!");
     }
 }
 

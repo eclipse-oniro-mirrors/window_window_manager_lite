@@ -38,12 +38,12 @@ bool LiteWMSClient::InitLiteWMSClient()
     if (proxy_ == nullptr) {
         IUnknown* iUnknown = SAMGR_GetInstance()->GetDefaultFeatureApi(SERVICE_NAME);
         if (iUnknown == nullptr) {
-            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "iUnknown is NULL");
+            GRAPHIC_LOGE("iUnknown is NULL");
             return false;
         }
         (void)iUnknown->QueryInterface(iUnknown, CLIENT_PROXY_VER, (void**)&proxy_);
         if (proxy_ == nullptr) {
-            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "QueryInterface failed!");
+            GRAPHIC_LOGE("QueryInterface failed!");
             return false;
         }
     }

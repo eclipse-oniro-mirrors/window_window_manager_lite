@@ -74,7 +74,7 @@ void InputManagerService::ReadCallback(const RawEvent* event)
 
 void* InputManagerService::Distribute(void* args)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "InputManagerService::Distribute Ready to read distribute!");
+    GRAPHIC_LOGI("InputManagerService::Distribute Ready to read distribute!");
     while (true) {
         pthread_mutex_lock(&lock_);
         while (eventQueue_.size() == 0) {

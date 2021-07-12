@@ -28,7 +28,7 @@ LiteProxySurface::~LiteProxySurface()
 
 void LiteProxySurface::Lock(void** buf, void** phyMem, uint32_t* strideLen)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Lock");
+    GRAPHIC_LOGI("Lock");
     if (surface_ == nullptr) {
         return;
     }
@@ -36,7 +36,7 @@ void LiteProxySurface::Lock(void** buf, void** phyMem, uint32_t* strideLen)
     if (buffer_ == nullptr) {
         buffer_ = surface_->RequestBuffer();
         if (buffer_ == nullptr) {
-            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "buffer_ is null!");
+            GRAPHIC_LOGE("buffer_ is null!");
             *buf = nullptr;
             *phyMem = nullptr;
             *strideLen = 0;
@@ -47,7 +47,7 @@ void LiteProxySurface::Lock(void** buf, void** phyMem, uint32_t* strideLen)
     uintptr_t phyAddr = buffer_->GetPhyAddr();
     *phyMem = (void*)phyAddr;
     *strideLen = surface_->GetStride();
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "strideLen=%d", *strideLen);
+    GRAPHIC_LOGI("strideLen=%d", *strideLen);
 }
 
 void LiteProxySurface::Unlock()
@@ -56,7 +56,7 @@ void LiteProxySurface::Unlock()
         return;
     }
 
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Unlock");
+    GRAPHIC_LOGI("Unlock");
     surface_->FlushBuffer(buffer_);
     buffer_ = nullptr;
 }
