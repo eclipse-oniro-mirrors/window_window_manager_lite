@@ -45,14 +45,14 @@ void InputEventClientProxy::ClientRequestHandle(int funcId, void* origin, IpcIo*
 void InputEventClientProxy::AddListener(const void* origin, IpcIo* req, IpcIo* reply)
 {
     if (clientInfoMap_.size() >= MAX_CLIENT_SIZE) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Exceeded the maximum number!");
+        GRAPHIC_LOGE("Exceeded the maximum number!");
         return;
     }
     pid_t pid = GetCallingPid(origin);
     SvcIdentity* sid = IpcIoPopSvc(req);
     bool alwaysInvoke = IpcIoPopBool(req);
     if (sid == nullptr) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Pop Svc failed.");
+        GRAPHIC_LOGE("Pop Svc failed.");
         return;
     }
     SvcIdentity svc = *sid;
@@ -63,7 +63,7 @@ void InputEventClientProxy::AddListener(const void* origin, IpcIo* req, IpcIo* r
 #endif
     uint32_t cbId = 0;
     if (RegisterDeathCallback(NULL, svc, DeathCallback, const_cast<void*>(origin), &cbId) != LITEIPC_OK) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Register death callback failed!");
+        GRAPHIC_LOGE("Register death callback failed!");
         return;
     }
     struct ClientInfo clientInfo = { svc, cbId, alwaysInvoke };

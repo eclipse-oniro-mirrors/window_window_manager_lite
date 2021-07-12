@@ -46,14 +46,14 @@ static BOOL Initialize(Service* service, Identity identity)
 {
     IMSService* example = reinterpret_cast<IMSService*>(service);
     example->identity = identity;
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Initialize(%s)! Identity<%d, %d, %p>", IMS_SERVICE_NAME,
+    GRAPHIC_LOGI("Initialize(%s)! Identity<%d, %d, %p>", IMS_SERVICE_NAME,
         identity.serviceId, identity.featureId, identity.queueId);
     return TRUE;
 }
 
 static BOOL MessageHandle(Service* service, Request* msg)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "MessageHandle(%s)! Request<%d, %d, %p>",
+    GRAPHIC_LOGI("MessageHandle(%s)! Request<%d, %d, %p>",
         service->GetName(service), msg->msgId, msg->msgValue, msg->data);
     return FALSE;
 }
@@ -85,12 +85,12 @@ static void Init(void)
 {
     BOOL ret = SAMGR_GetInstance()->RegisterService(reinterpret_cast<Service*>(&g_example));
     if (ret != TRUE) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "regist service failed.");
+        GRAPHIC_LOGE("regist service failed.");
         return;
     }
     ret = SAMGR_GetInstance()->RegisterDefaultFeatureApi(IMS_SERVICE_NAME, GET_IUNKNOWN(g_example));
     if (ret != TRUE) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "regist feature failed.");
+        GRAPHIC_LOGE("regist feature failed.");
         return;
     }
 }

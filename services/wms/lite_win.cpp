@@ -57,7 +57,7 @@ LiteWindow::LiteWindow(const LiteWinConfig& config)
 LiteWindow::~LiteWindow()
 {
     if (needUnregister_) {
-        HILOG_INFO(HILOG_MODULE_GRAPHIC, "UnregisterIpcCallback");
+        GRAPHIC_LOGI("UnregisterIpcCallback");
         UnregisterIpcCallback(sid_);
     }
 
@@ -77,7 +77,7 @@ bool LiteWindow::CreateSurface()
     if (surface_ == nullptr) {
         surface_ = Surface::CreateSurface();
         if (surface_ == nullptr) {
-            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "CreateSurface failed!");
+            GRAPHIC_LOGE("CreateSurface failed!");
             return false;
         }
         surface_->SetWidthAndHeight(config_.rect.GetWidth(), config_.rect.GetHeight());
@@ -127,7 +127,7 @@ void LiteWindow::UpdateBackBuf()
         void* acquireBufVirAddr = acquireBuffer->GetVirAddr();
         void* backBufVirAddr = backBuf_->GetVirAddr();
         if (acquireBufVirAddr != nullptr && backBufVirAddr != nullptr) {
-            HILOG_INFO(HILOG_MODULE_GRAPHIC, "memcpy, backBuf size=%d, acquireBuffer size=%d",
+            GRAPHIC_LOGI("memcpy, backBuf size=%d, acquireBuffer size=%d",
                 backBuf_->GetSize(), acquireBuffer->GetSize());
 #ifdef ARM_NEON_OPT
             {
@@ -139,11 +139,11 @@ void LiteWindow::UpdateBackBuf()
                 DEBUG_PERFORMANCE_TRACE("UpdateBackBuf");
                 if (memcpy_s(backBufVirAddr, backBuf_->GetSize(),
                     acquireBufVirAddr, acquireBuffer->GetSize()) != EOK) {
-                    HILOG_ERROR(HILOG_MODULE_GRAPHIC, "memcpy_s error!");
+                    GRAPHIC_LOGE("memcpy_s error!");
                 }
             }
 #endif
-            HILOG_INFO(HILOG_MODULE_GRAPHIC, "memcpy end");
+            GRAPHIC_LOGI("memcpy end");
         }
         surface_->ReleaseBuffer(acquireBuffer);
     }
@@ -169,7 +169,7 @@ void LiteWindow::FlushWithModeCopy(const Rect& srcRect, const LiteSurfaceData* l
         }
 #elif defined LAYER_PF_ARGB8888
         if (memcpy_s(dstBuf, lineSize, srcBuf, lineSize) != EOK) {
-            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "memcpy_s error!");
+            GRAPHIC_LOGE("memcpy_s error!");
         }
 #endif
         srcBuf += stride;
@@ -239,7 +239,7 @@ void LiteWindow::Flush(const Rect& srcRect, const LiteSurfaceData* layerData, in
         srcData.pixelFormat = (ImagePixelFormat)surface_->GetFormat();
         srcData.stride = surface_->GetStride();
         srcData.phyAddr = reinterpret_cast<uint8_t*>(phyaddr);
-        HILOG_DEBUG(HILOG_MODULE_GRAPHIC, "Hardware composite, width=%d, height=%d, pixelFormat=%d, stride=%d",
+        GRAPHIC_LOGD("Hardware composite, width=%d, height=%d, pixelFormat=%d, stride=%d",
             srcData.width, srcData.height, srcData.pixelFormat, srcData.stride);
         if (GfxEngines::GetInstance()->GfxBlit(srcData, srcRect, *layerData, dx, dy)) {
             return;
@@ -261,7 +261,7 @@ Surface* LiteWindow::GetSurface()
 
 void LiteWindow::MoveTo(int16_t x, int16_t y)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "{%d,%d}=>{%d,%d}", config_.rect.GetLeft(), config_.rect.GetTop(), x, y);
+    GRAPHIC_LOGI("{%d,%d}=>{%d,%d}", config_.rect.GetLeft(), config_.rect.GetTop(), x, y);
     LiteWM::GetInstance()->UpdateWindowRegion(this, config_.rect);
     config_.rect.SetPosition(x, y);
     LiteWM::GetInstance()->UpdateWindowRegion(this, config_.rect);
@@ -269,8 +269,7 @@ void LiteWindow::MoveTo(int16_t x, int16_t y)
 
 void LiteWindow::Resize(int16_t width, int16_t height)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC,
-        "{%d,%d}=>{%d,%d}", config_.rect.GetWidth(), config_.rect.GetHeight(), width, height);
+    GRAPHIC_LOGI("{%d,%d}=>{%d,%d}", config_.rect.GetWidth(), config_.rect.GetHeight(), width, height);
     config_.rect.Resize(width, height);
     ResizeSurface(width, height);
 }

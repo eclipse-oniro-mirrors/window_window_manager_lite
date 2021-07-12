@@ -111,12 +111,12 @@ LiteWM::LiteWM()
     layerData_ = GetDevSurfaceData();
     if (layerData_ != nullptr) {
         if (layerData_->virAddr == nullptr) {
-            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "LayerInfo addr is null!");
+            GRAPHIC_LOGE("LayerInfo addr is null!");
         }
-        HILOG_INFO(HILOG_MODULE_GRAPHIC, "LayerInfo, width=%d, height=%d, stride=%d",
+        GRAPHIC_LOGI("LayerInfo, width=%d, height=%d, stride=%d",
             layerData_->width, layerData_->height, layerData_->stride);
     } else {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "LayerInfo is null!");
+        GRAPHIC_LOGE("LayerInfo is null!");
     }
 }
 
@@ -274,7 +274,7 @@ void LiteWM::Resize(int32_t id, int16_t width, int16_t height)
 
 void LiteWM::UpdateWindow(int32_t id)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "UpdateWindow, id=%d", id);
+    GRAPHIC_LOGI("UpdateWindow, id=%d", id);
     LiteWindow* window = GetWindowById(id);
     if (window != nullptr) {
         UpdateWindowRegion(window, window->config_.rect);
@@ -319,7 +319,7 @@ ListNode<LiteWindow*>* LiteWM::GetWindowNodeById(int32_t id)
 
 void LiteWM::InitMouseCursor()
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "InitMouseCursor");
+    GRAPHIC_LOGI("InitMouseCursor");
     cursorInfo_.rect.SetRect(0, 0, CURSOR_WIDTH - 1, CURSOR_HEIGHT - 1);
     cursorInfo_.needRedraw = false;
     cursorInfo_.enableCursor = false;
@@ -362,7 +362,7 @@ void LiteWM::RemoveWindow(int32_t id)
 bool LiteWM::CheckWinIdIsAvailable()
 {
     if (winIdStorage == WINDOW_ID_FULL_STORAGE) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "reach max window num!");
+        GRAPHIC_LOGE("reach max window num!");
         return false;
     }
     return true;
@@ -426,8 +426,7 @@ void LiteWM::CalculateUpdateRegion(const ListNode<LiteWindow*>* winNode, int16_t
     if ((window != nullptr) && window->isShow_ && window->IsCoverMode()) {
         Rect& winRect = window->config_.rect;
         Rect mask;
-        HILOG_DEBUG(HILOG_MODULE_GRAPHIC,
-            "winRect={%d,%d,%d,%d}, rect={%d,%d,%d,%d}", EXPAND_RECT(winRect), EXPAND_RECT(rect));
+        GRAPHIC_LOGD("winRect={%d,%d,%d,%d}, rect={%d,%d,%d,%d}", EXPAND_RECT(winRect), EXPAND_RECT(rect));
         if (mask.Intersect(winRect, rect)) {
             if (x1 != mask.GetLeft()) {
                 CalculateUpdateRegion(winNode->prev_, x1, y1, mask.GetLeft() - 1, y2);
@@ -453,7 +452,7 @@ void LiteWM::CalculateUpdateRegion(const ListNode<LiteWindow*>* winNode, int16_t
 void LiteWM::AddUpdateRegion(const Rect& rect)
 {
     GraphicLocker lock(stackLock_);
-    HILOG_DEBUG(HILOG_MODULE_GRAPHIC, "AddUpdateRegion, rect={%d,%d,%d,%d}", EXPAND_RECT(rect));
+    GRAPHIC_LOGD("AddUpdateRegion, rect={%d,%d,%d,%d}", EXPAND_RECT(rect));
     if (updates_.num == 0) {
         updates_.updates[updates_.num++] = rect;
         updates_.bound = rect;
@@ -528,8 +527,7 @@ void LiteWM::DrawRegion(const ListNode<LiteWindow*>* winNode, int16_t x1, int16_
     Rect mask;
     if (!window->isShow_ || window->NoNeedToDraw() ||
         window->backBuf_ == nullptr || !mask.Intersect(winRect, rect)) {
-        HILOG_INFO(HILOG_MODULE_GRAPHIC,
-            "winRect={%d,%d,%d,%d}, rect={%d,%d,%d,%d}", EXPAND_RECT(winRect), EXPAND_RECT(rect));
+        GRAPHIC_LOGI("winRect={%d,%d,%d,%d}, rect={%d,%d,%d,%d}", EXPAND_RECT(winRect), EXPAND_RECT(rect));
         DrawRegion(winNode->next_, x1, y1, x2, y2);
         return;
     }
@@ -543,10 +541,9 @@ void LiteWM::DrawRegion(const ListNode<LiteWindow*>* winNode, int16_t x1, int16_
 
     Rect srcRect = mask;
     srcRect.SetPosition(mask.GetLeft() - winRect.GetLeft(), mask.GetTop() - winRect.GetTop());
-    HILOG_DEBUG(HILOG_MODULE_GRAPHIC,
-        "Blit, id=%d, srcRect={%d,%d,%d,%d}, x=%d, y=%d", window->id_, EXPAND_RECT(srcRect), x, y);
+    GRAPHIC_LOGD("Blit, id=%d, srcRect={%d,%d,%d,%d}, x=%d, y=%d", window->id_, EXPAND_RECT(srcRect), x, y);
     window->Flush(srcRect, layerData_, x, y);
-    HILOG_DEBUG(HILOG_MODULE_GRAPHIC, "Blit finish");
+    GRAPHIC_LOGD("Blit finish");
 
     if (x1 != mask.GetLeft()) {
         DrawRegion(winNode->next_, x1, y1, mask.GetLeft() - 1, y2);
@@ -578,12 +575,12 @@ void LiteWM::DrawBackground(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
     y1 = rect.GetTop();
     y2 = rect.GetBottom();
 
-    HILOG_DEBUG(HILOG_MODULE_GRAPHIC, "DrawBackground, {%d,%d,%d,%d}", x1, y1, x2, y2);
+    GRAPHIC_LOGD("DrawBackground, {%d,%d,%d,%d}", x1, y1, x2, y2);
     int32_t len = static_cast<int32_t>(x2 - x1 + 1) * layerData_->bytePerPixel;
     for (int16_t y = y1; y <= y2; y++) {
         LayerColorType* buf1 = reinterpret_cast<LayerColorType*>(layerData_->virAddr + y * layerData_->stride);
         if (memset_s(buf1 + x1, len, 0, len) != EOK) {
-            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "memset_s error!");
+            GRAPHIC_LOGE("memset_s error!");
         }
     }
 }
@@ -741,7 +738,7 @@ void LiteWM::Screenshot()
     if (dstAddr != nullptr && srcAddr != nullptr) {
         for (uint32_t i = 0; i < height; i++) {
             if (memcpy_s(dstAddr, lineSize, srcAddr, lineSize) != EOK) {
-                HILOG_ERROR(HILOG_MODULE_GRAPHIC, "memcpy_s error!");
+                GRAPHIC_LOGE("memcpy_s error!");
             }
             dstAddr += lineSize;
             srcAddr += layerData_->stride;
@@ -756,14 +753,14 @@ end2:
 
 void LiteWM::OnClientDeathNotify(pid_t pid)
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "OnClientDeathNotify");
+    GRAPHIC_LOGI("OnClientDeathNotify");
     GraphicLocker lock(stackLock_);
     auto node = winList_.Begin();
     while (node != winList_.End()) {
         auto tmp = node;
         node = node->next_;
         LiteWindow* window = tmp->data_;
-        HILOG_INFO(HILOG_MODULE_GRAPHIC, "window->GetPid() = %d,pid = %d", window->GetPid(), pid);
+        GRAPHIC_LOGI("window->GetPid() = %d,pid = %d", window->GetPid(), pid);
         if (window->GetPid() == pid) {
             winList_.Remove(tmp);
             AddUpdateRegion(window->config_.rect);

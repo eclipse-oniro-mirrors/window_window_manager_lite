@@ -23,7 +23,7 @@
 namespace OHOS {
 int LiteProxyWindowsManager::Init()
 {
-    HILOG_INFO(HILOG_MODULE_GRAPHIC, "Init");
+    GRAPHIC_LOGI("Init");
     LiteWMSClient::GetInstance()->InitLiteWMSClient();
     LiteWMRequestor::GetInstance()->ClientRegister();
     LiteWMRequestor::GetInstance()->GetLayerInfo();

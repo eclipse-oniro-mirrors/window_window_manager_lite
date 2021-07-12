@@ -36,7 +36,7 @@ LiteWinRequestor::~LiteWinRequestor()
 int LiteWinRequestor::Callback(void* owner, int code, IpcIo* reply)
 {
     if (code != 0) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "callback error, code = %d", code);
+        GRAPHIC_LOGE("callback error, code = %d", code);
         return -1;
     }
 
@@ -45,7 +45,7 @@ int LiteWinRequestor::Callback(void* owner, int code, IpcIo* reply)
     }
 
     CallBackPara* para = (CallBackPara*)owner;
-    HILOG_DEBUG(HILOG_MODULE_GRAPHIC, "Callback, funcId = %d", para->funcId);
+    GRAPHIC_LOGD("Callback, funcId = %d", para->funcId);
     switch (para->funcId) {
         case LiteWMS_GetSurface: {
             LiteWinRequestor* requestor = (LiteWinRequestor*)(para->data);
@@ -79,7 +79,7 @@ Surface* LiteWinRequestor::GetSurface()
         para.data = this;
         int32_t ret = proxy_->Invoke(proxy_, LiteWMS_GetSurface, &io, &para, Callback);
         if (ret != 0) {
-            HILOG_ERROR(HILOG_MODULE_GRAPHIC, "GetSurface failed, ret=%d", ret);
+            GRAPHIC_LOGE("GetSurface failed, ret=%d", ret);
         }
     }
     return surface_;
@@ -94,7 +94,7 @@ void LiteWinRequestor::Show()
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Show, &io, NULL, NULL);
     if (ret != 0) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Show failed, ret=%d", ret);
+        GRAPHIC_LOGE("Show failed, ret=%d", ret);
     }
 }
 
@@ -107,7 +107,7 @@ void LiteWinRequestor::Hide()
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Hide, &io, NULL, NULL);
     if (ret != 0) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Hide failed, ret=%d", ret);
+        GRAPHIC_LOGE("Hide failed, ret=%d", ret);
     }
 }
 
@@ -120,7 +120,7 @@ void LiteWinRequestor::RaiseToTop()
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_RaiseToTop, &io, NULL, NULL);
     if (ret != 0) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "RaiseToTop failed, ret=%d", ret);
+        GRAPHIC_LOGE("RaiseToTop failed, ret=%d", ret);
     }
 }
 
@@ -133,7 +133,7 @@ void LiteWinRequestor::LowerToBottom()
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_LowerToBottom, &io, NULL, NULL);
     if (ret != 0) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "LowerToBottom failed, ret=%d", ret);
+        GRAPHIC_LOGE("LowerToBottom failed, ret=%d", ret);
     }
 }
 
@@ -148,7 +148,7 @@ void LiteWinRequestor::MoveTo(int16_t x, int16_t y)
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_MoveTo, &io, NULL, NULL);
     if (ret != 0) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "MoveTo failed, ret=%d", ret);
+        GRAPHIC_LOGE("MoveTo failed, ret=%d", ret);
     }
 }
 
@@ -163,7 +163,7 @@ void LiteWinRequestor::Resize(int16_t width, int16_t height)
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Resize, &io, NULL, Callback);
     if (ret != 0) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Resize failed, ret=%d", ret);
+        GRAPHIC_LOGE("Resize failed, ret=%d", ret);
     }
 }
 
@@ -176,7 +176,7 @@ void LiteWinRequestor::Update()
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Update, &io, NULL, NULL);
     if (ret != 0) {
-        HILOG_ERROR(HILOG_MODULE_GRAPHIC, "Update failed, ret=%d", ret);
+        GRAPHIC_LOGE("Update failed, ret=%d", ret);
     }
 }
 } // namespace OHOS
