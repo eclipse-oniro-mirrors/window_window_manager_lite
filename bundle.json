@@ -1,0 +1,42 @@
+{
+  "name": "@ohos/wms",
+  "description": "Windows manager service",
+  "version": "3.1",
+  "license": "Apache License 2.0",
+  "pubiishAs": "code-segment",
+  "segment": {
+    "destPath": "foundation/graphic/wms"
+  },
+  "dirs": {},
+  "scripts": {},
+  "component": {
+    "name": "wms",
+    "subsystem": "graphic",
+    "syscap": [ "SystemCapability.Graphic.Wms" ],
+    "feature": [],
+    "adapted_system_type": [ "small" ],
+    "rom": "110KB",
+    "ram": "~50KB",
+    "deps": {
+      "third_party": [
+        "bounds_checking_function"
+      ],
+      "components": [
+        "hilog_lite",
+        "ipc_lite",
+        "samgr_lite",
+        "surface",
+        "peripheral_display",
+        "peripheral_input"
+      ]
+    },
+    "build": {
+      "sub_component": [
+        "//foundation/graphic/wms:lite_wms",
+        "//foundation/graphic/wms/test:lite_wms_test"
+      ],
+      "inner_kits": [],
+      "test": []
+    }
+  }
+}
