@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef GRAPHIC_LITE_IMS_LISTERNER_PROXY_H
-#define GRAPHIC_LITE_IMS_LISTERNER_PROXY_H
+#ifndef GRAPHIC_LITE_INPUT_EVENT_PROXY_H
+#define GRAPHIC_LITE_INPUT_EVENT_PROXY_H
 
 #include "input_event_distributer.h"
 #include "gfx_utils/input_event_info.h"

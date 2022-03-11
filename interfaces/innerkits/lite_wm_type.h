@@ -67,7 +67,7 @@ typedef enum {
 
 typedef enum {
     LiteWMS_EOK = 0,
-    LiteWMS_EUNKONW
+    LiteWMS_EUNKNOWN
 } LiteWMSErrorCode;
 
 struct CallBackPara {

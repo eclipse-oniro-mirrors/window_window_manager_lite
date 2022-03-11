@@ -48,7 +48,7 @@ public:
      *
      * @param [in] callback callback of read callback.
      *
-     * @returns return -1: register callbacke failed; return 0: register success.
+     * @returns return -1: register callback failed; return 0: register success.
      */
     int32_t RegisterReadCallback(ReadCallback callback)
     {
