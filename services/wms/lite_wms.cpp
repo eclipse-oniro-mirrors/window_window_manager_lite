@@ -201,7 +201,7 @@ void LiteWMS::Screenshot(IpcIo* req, IpcIo* reply)
 {
     Surface* surface = SurfaceImpl::GenericSurfaceByIpcIo(*req);
     bool ret = LiteWM::GetInstance()->OnScreenshot(surface);
-    IpcIoPushInt32(reply, ret ? LiteWMS_EOK : LiteWMS_EUNKONW);
+    IpcIoPushInt32(reply, ret ? LiteWMS_EOK : LiteWMS_EUNKNOWN);
 }
 
 void LiteWMS::ClientRegister(const void* origin, IpcIo* req, IpcIo* reply)

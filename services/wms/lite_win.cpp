@@ -196,7 +196,7 @@ void LiteWindow::FlushWithModeBlend(const Rect& srcRect, const LiteSurfaceData* 
             PF_ARGB1555* dst = reinterpret_cast<PF_ARGB1555*>(tmpDst);
             if (dst->alpha == 0) {
                 if (alpha) {
-                    // ARGB8888 to ARGB1555, R/G/B shoud right shift 3 bits
+                    // ARGB8888 to ARGB1555, R/G/B should right shift 3 bits
                     dst->red = (tmpSrc->red * alpha / OPA_OPAQUE) >> 3;
                     dst->green = (tmpSrc->green * alpha / OPA_OPAQUE) >> 3;
                     dst->blue = (tmpSrc->blue * alpha / OPA_OPAQUE) >> 3;

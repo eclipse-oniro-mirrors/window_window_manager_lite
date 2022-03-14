@@ -32,7 +32,7 @@ public:
      * @brief Distribute input events.
      *
      * @param [in] events events waiting for distribution.
-     * @param [in] size totoal size of events.
+     * @param [in] size total size of events.
      *
      */
     void Distribute(const RawEvent* events, int32_t size);
