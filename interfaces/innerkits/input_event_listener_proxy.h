@@ -16,9 +16,10 @@
 #ifndef GRAPHIC_LITE_IMS_CLIENT_PROXY_H
 #define GRAPHIC_LITE_IMS_CLIENT_PROXY_H
 
+#include <iproxy_client.h>
+
 #include "gfx_utils/input_event_info.h"
 #include "liteipc_adapter.h"
-#include <iproxy_client.h>
 
 namespace OHOS {
 class InputEventListenerProxy {

@@ -635,7 +635,7 @@ LiteWindow* LiteWM::FindTargetWindow(const RawEvent& event)
 
     switch (event.type) {
         case InputDevType::INDEV_TYPE_MOUSE:
-        //fall-through
+            // fall-through
         case InputDevType::INDEV_TYPE_TOUCH: {
             auto win = winList_.Begin();
             while (win != winList_.End()) {
@@ -649,7 +649,7 @@ LiteWindow* LiteWM::FindTargetWindow(const RawEvent& event)
             break;
         }
         case InputDevType::INDEV_TYPE_KEY:
-        //fall-through
+            // fall-through
         case InputDevType::INDEV_TYPE_BUTTON: {
             targetWindow = winList_.Front();
             break;
