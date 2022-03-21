@@ -637,14 +637,14 @@ LiteWindow* LiteWM::FindTargetWindow(const RawEvent& event)
         case InputDevType::INDEV_TYPE_MOUSE:
         //fall-through
         case InputDevType::INDEV_TYPE_TOUCH: {
-            auto node = winList_.Begin();
-            while (node != winList_.End()) {
+            auto win = winList_.Begin();
+            while (win != winList_.End()) {
                 Point p = { event.x, event.y };
-                if (node->data_->isShow_ && node->data_->GetConfig().rect.IsContains(p)) {
-                    targetWindow = node->data_;
+                if (win->data_->isShow_ && win->data_->GetConfig().rect.IsContains(p)) {
+                    targetWindow = win->data_;
                     break;
                 }
-                node = node->next_;
+                win = win->next_;
             }
             break;
         }
