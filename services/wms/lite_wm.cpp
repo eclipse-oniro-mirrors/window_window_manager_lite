@@ -328,7 +328,7 @@ void LiteWM::InitMouseCursor()
 LiteWindow* LiteWM::CreateWindow(const LiteWinConfig& config, pid_t pid)
 {
     GraphicLocker lock(stackLock_);
-    if (CheckWinIdIsAvailable() == false) {
+    if (!CheckWinIdIsAvailable()) {
         return nullptr;
     }
     LiteWindow* window = new LiteWindow(config);
@@ -371,7 +371,7 @@ bool LiteWM::CheckWinIdIsAvailable()
 int32_t LiteWM::GetUniqueWinId()
 {
     static uint8_t winId = 0;
-    if (CheckWinIdIsAvailable() == false) {
+    if (!CheckWinIdIsAvailable()) {
         return INVALID_WINDOW_ID;
     }
     while (winIdStorage & (1 << winId)) {
@@ -566,7 +566,7 @@ void LiteWM::DrawBackground(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
     Rect rect(0, 0, layerData_->width - 1, layerData_->height - 1);
     Rect rectBg(x1, y1, x2, y2);
-    if (rect.Intersect(rect, rectBg) == false) {
+    if (!rect.Intersect(rect, rectBg)) {
         return;
     }
 
@@ -588,7 +588,7 @@ void LiteWM::DrawBackground(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 void LiteWM::DrawMouseCursor()
 {
     Rect rect(0, 0, layerData_->width - 1, layerData_->height - 1);
-    if (rect.Intersect(rect, cursorInfo_.rect) == false) {
+    if (!rect.Intersect(rect, cursorInfo_.rect)) {
         return;
     }
 
@@ -635,6 +635,7 @@ LiteWindow* LiteWM::FindTargetWindow(const RawEvent& event)
 
     switch (event.type) {
         case InputDevType::INDEV_TYPE_MOUSE:
+        //fall-through
         case InputDevType::INDEV_TYPE_TOUCH: {
             auto node = winList_.Begin();
             while (node != winList_.End()) {
@@ -648,6 +649,7 @@ LiteWindow* LiteWM::FindTargetWindow(const RawEvent& event)
             break;
         }
         case InputDevType::INDEV_TYPE_KEY:
+        //fall-through
         case InputDevType::INDEV_TYPE_BUTTON: {
             targetWindow = winList_.Front();
             break;
