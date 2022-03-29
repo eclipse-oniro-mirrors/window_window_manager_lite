@@ -51,7 +51,7 @@ hb build lite_wms
 
 ## Repositories Involved<a name="section1371113476307"></a>
 
-[Graphic subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/graphics-subsystem.md)
+[Graphic subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/graphics.md)
 
 **graphic_wms**
 

@@ -17,8 +17,9 @@
 #define GRAPHIC_LITE_IMS_CLIENT_PROXY_H
 
 #include <iproxy_client.h>
-#include "liteipc_adapter.h"
+
 #include "gfx_utils/input_event_info.h"
+#include "liteipc_adapter.h"
 
 namespace OHOS {
 class InputEventListenerProxy {
@@ -30,22 +31,39 @@ public:
         RawEventListener() : alwaysInvoke_(false) {}
         virtual ~RawEventListener() {}
 
+        /**
+         * @brief Change always-invoke state to enable.
+         */
         void EnableAlwaysInvoke(bool alwaysInvoke)
         {
             alwaysInvoke_ = alwaysInvoke;
         }
 
+        /**
+         * @brief Verify always-invoke state.
+         */
         bool IsAlwaysInvoke()
         {
             return alwaysInvoke_;
         }
+
+        /**
+         * @brief Do something when raw event comes.
+         */
         virtual void OnRawEvent(const RawEvent& event) = 0;
+
     protected:
-        bool alwaysInvoke_;        
+        bool alwaysInvoke_;
     };
 
+    /**
+     * @brief Regist input event lisener.
+     */
     bool RegisterInputEventListener(RawEventListener* listener);
 
+    /**
+     * @brief Unegist input event lisener.
+     */
     bool UnregisterInputEventListener();
 
 private:
