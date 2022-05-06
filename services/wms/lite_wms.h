@@ -18,8 +18,7 @@
 
 #include "gfx_utils/geometry2d.h"
 #include "lite_wm_type.h"
-#include "liteipc_adapter.h"
-#include "serializer.h"
+#include "ipc_skeleton.h"
 
 namespace OHOS {
 class LiteWMS {
@@ -36,8 +35,8 @@ public:
 private:
     LiteWMS(){};
     ~LiteWMS() {}
-    static int32_t SurfaceRequestHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg);
-    static int32_t DeathCallback(const IpcContext* context, void* ipcMsg, IpcIo* data, void* arg);
+    static int32_t SurfaceRequestHandler(uint32_t code, IpcIo *data, IpcIo *reply, MessageOption option);
+    static void DeathCallback(void* arg);
 
     void GetSurface(IpcIo* req, IpcIo* reply);
     void Show(IpcIo* req, IpcIo* reply);
@@ -47,11 +46,11 @@ private:
     void MoveTo(IpcIo* req, IpcIo* reply);
     void Resize(IpcIo* req, IpcIo* reply);
     void Update(IpcIo* req, IpcIo* reply);
-    void CreateWindow(const void* origin, IpcIo* req, IpcIo* reply);
+    void CreateWindow(IpcIo* req, IpcIo* reply);
     void RemoveWindow(IpcIo* req, IpcIo* reply);
     void GetEventData(IpcIo* req, IpcIo* reply);
     void Screenshot(IpcIo* req, IpcIo* reply);
-    void ClientRegister(const void* origin, IpcIo* req, IpcIo* reply);
+    void ClientRegister(IpcIo* req, IpcIo* reply);
     void GetLayerInfo(IpcIo* req, IpcIo* reply);
 };
 } // namespace OHOS

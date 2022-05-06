@@ -48,21 +48,17 @@ void InputEventClientProxy::AddListener(const void* origin, IpcIo* req, IpcIo* r
         GRAPHIC_LOGE("Exceeded the maximum number!");
         return;
     }
-    pid_t pid = GetCallingPid(origin);
-    SvcIdentity* sid = IpcIoPopSvc(req);
-    bool alwaysInvoke = IpcIoPopBool(req);
-    if (sid == nullptr) {
-        GRAPHIC_LOGE("Pop Svc failed.");
+    pid_t pid = GetCallingPid();
+    SvcIdentity svc = {0};
+    bool ret = ReadRemoteObject(req, &svc);
+    bool alwaysInvoke;
+    ReadBool(req, &alwaysInvoke);
+    if (!ret) {
+        GRAPHIC_LOGE("ReadRemoteObject failed.");
         return;
     }
-    SvcIdentity svc = *sid;
-#ifdef __LINUX__
-    BinderAcquire(svc.ipcContext, svc.handle);
-    free(sid);
-    sid = nullptr;
-#endif
     uint32_t cbId = 0;
-    if (RegisterDeathCallback(NULL, svc, DeathCallback, const_cast<void*>(origin), &cbId) != LITEIPC_OK) {
+    if (AddDeathRecipient(svc, DeathCallback, nullptr, &cbId) != 0) {
         GRAPHIC_LOGE("Register death callback failed!");
         return;
     }
@@ -72,23 +68,16 @@ void InputEventClientProxy::AddListener(const void* origin, IpcIo* req, IpcIo* r
     pthread_mutex_unlock(&lock_);
 }
 
-int32_t InputEventClientProxy::DeathCallback(const IpcContext* context, void* ipcMsg, IpcIo* data, void* origin)
+void InputEventClientProxy::DeathCallback(void* origin)
 {
-    if (origin != nullptr) {
-        InputEventClientProxy::GetInstance()->RemoveListener(origin, nullptr, nullptr);
-        return 0;
-    }
-    return -1;
+    InputEventClientProxy::GetInstance()->RemoveListener(origin, nullptr, nullptr);
 }
 
 void InputEventClientProxy::RemoveListener(const void* origin, IpcIo* req, IpcIo* reply)
 {
-    pid_t pid = GetCallingPid(origin);
+    pid_t pid = GetCallingPid();
     if (clientInfoMap_.count(pid) > 0) {
-#ifdef __LINUX__
-        BinderRelease(clientInfoMap_[pid].svc.ipcContext, clientInfoMap_[pid].svc.handle);
-#endif
-        UnregisterDeathCallback(clientInfoMap_[pid].svc, clientInfoMap_[pid].cdId);
+        ReleaseSvc(clientInfoMap_[pid].svc);
         pthread_mutex_lock(&lock_);
         clientInfoMap_.erase(pid);
         pthread_mutex_unlock(&lock_);
@@ -100,12 +89,15 @@ void InputEventClientProxy::OnRawEvent(const RawEvent& event)
     IpcIo io;
     uint8_t tmpData[IMS_DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, IMS_DEFAULT_IPC_SIZE, 1);
-    IpcIoPushFlatObj(&io, static_cast<const void*>(&event), sizeof(RawEvent));
+    WriteRawData(&io, static_cast<const void*>(&event), sizeof(RawEvent));
     pthread_mutex_lock(&lock_);
     std::map<pid_t, ClientInfo>::iterator it;
     for (it = clientInfoMap_.begin(); it != clientInfoMap_.end(); it++) {
         if (it->second.alwaysInvoke || (event.state != lastState_)) {
-            SendRequest(nullptr, it->second.svc, 0, &io, nullptr, LITEIPC_FLAG_ONEWAY, nullptr);
+            MessageOption option;
+            MessageOptionInit(&option);
+            option.flags = TF_OP_ASYNC;
+            SendRequest(it->second.svc, 0, &io, nullptr, option, nullptr);
         }
     }
     lastState_ = event.state;
