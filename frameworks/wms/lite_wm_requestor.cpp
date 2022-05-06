@@ -45,7 +45,8 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
             if (requestor == nullptr) {
                 break;
             }
-            int32_t id = IpcIoPopInt32(reply);
+            int32_t id;
+            ReadInt32(reply, &id);
             GRAPHIC_LOGI("CreateWindow, id=%d", id);
             if (id == INVALID_WINDOW_ID) {
                 *requestor = nullptr;
@@ -55,8 +56,7 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
             break;
         }
         case LiteWMS_GetEventData: {
-            uint32_t size;
-            DeviceData* data = static_cast<DeviceData*>(IpcIoPopFlatObj(reply, &size));
+            DeviceData* data = static_cast<DeviceData*>(ReadRawData(reply, sizeof(DeviceData)));
             DeviceData* retData = (DeviceData*)(para->data);
             if (data != nullptr && retData != nullptr) {
                 *retData = *data;
@@ -64,7 +64,8 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
             break;
         }
         case LiteWMS_Screenshot: {
-            int32_t ret = IpcIoPopInt32(reply);
+            int32_t ret;
+            ReadInt32(reply, &ret);
             if (ret != LiteWMS_EOK) {
                 GRAPHIC_LOGW("Screenshot busy!");
                 LiteWMRequestor::GetInstance()->ScreenShotClearup();
@@ -72,8 +73,7 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
             break;
         }
         case LiteWMS_GetLayerInfo: {
-            uint32_t size;
-            LiteLayerInfo* data = static_cast<LiteLayerInfo*>(IpcIoPopFlatObj(reply, &size));
+            LiteLayerInfo* data = static_cast<LiteLayerInfo*>(ReadRawData(reply, sizeof(LiteLayerInfo)));
             LiteLayerInfo* retData = (LiteLayerInfo*)(para->data);
             if (data != nullptr && retData != nullptr) {
                 *retData = *data;
@@ -86,7 +86,7 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
     return 0;
 }
 
-int32_t LiteWMRequestor::WmsMsgHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg)
+int32_t LiteWMRequestor::WmsMsgHandler(uint32_t code, IpcIo* data, IpcIo* reply, MessageOption option)
 {
     // It's not used yet
     return 0;
@@ -98,16 +98,23 @@ void LiteWMRequestor::ClientRegister()
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 1);
 
-    SvcIdentity svc;
-    if (RegisterIpcCallback(WmsMsgHandler, 0, IPC_WAIT_FOREVER, &svc, NULL) != LITEIPC_OK) {
-        GRAPHIC_LOGE("RegisterIpcCallback failed.");
+    IpcObjectStub* objectStub = new IpcObjectStub();
+    if (objectStub == nullptr) {
         return;
     }
-    IpcIoPushSvc(&io, &svc);
+    SvcIdentity svc;
+    objectStub->func = WmsMsgHandler;
+    objectStub->args = nullptr;
+    objectStub->isRemote = false;
+    svc.handle = IPC_INVALID_HANDLE;
+    svc.token = SERVICE_TYPE_ANONYMOUS;
+    svc.cookie = reinterpret_cast<uintptr_t>(objectStub);
+    WriteRemoteObject(&io, &svc);
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_ClientRegister, &io, NULL, Callback);
     if (ret != 0) {
         GRAPHIC_LOGE("ClientRegister failed, ret=%d", ret);
     }
+    delete objectStub;
 }
 
 void LiteWMRequestor::GetLayerInfo()
@@ -130,7 +137,7 @@ LiteWinRequestor* LiteWMRequestor::CreateWindow(const LiteWinConfig& config)
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushFlatObj(&io, &config, sizeof(LiteWinConfig));
+    WriteRawData(&io, &config, sizeof(LiteWinConfig));
 
     LiteWinRequestor* requestor = nullptr;
     CallBackPara para = {};
@@ -149,7 +156,7 @@ void LiteWMRequestor::RemoveWindow(int32_t id)
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushInt32(&io, id);
+    WriteInt32(&io, id);
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_RemoveWindow, &io, NULL, Callback);
     if (ret != 0) {
@@ -169,19 +176,18 @@ void LiteWMRequestor::GetEventData(DeviceData* data)
     (void)proxy_->Invoke(proxy_, LiteWMS_GetEventData, &io, &para, Callback);
 }
 
-int LiteWMRequestor::SurfaceRequestHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg)
+int LiteWMRequestor::SurfaceRequestHandler(uint32_t code, IpcIo* data, IpcIo* reply, MessageOption option)
 {
-    SurfaceImpl* surface = (SurfaceImpl*)arg;
+    SurfaceImpl* surface = (SurfaceImpl*)(option.args);
     if (surface == nullptr) {
         return 0;
     }
-    surface->DoIpcMsg(ipcMsg, io);
+    surface->DoIpcMsg(code, data, reply, option);
     return 0;
 }
 
 void LiteWMRequestor::ScreenShotClearup()
 {
-    UnregisterIpcCallback(sid_);
     if (surface_ != nullptr) {
         delete surface_;
         surface_ = nullptr;
@@ -224,21 +230,20 @@ void LiteWMRequestor::Screenshot()
     surface_->SetUsage(1);
     surface_->RegisterConsumerListener(*this);
 
-    int32_t ret = RegisterIpcCallback(SurfaceRequestHandler, 0, IPC_WAIT_FOREVER, &sid_, surface_);
-    if (ret != LITEIPC_OK) {
-        GRAPHIC_LOGE("RegisterIpcCallback failed.");
-        delete surface_;
-        surface_ = nullptr;
-        return;
-    }
+    objectStub_ .func = SurfaceRequestHandler;
+    objectStub_ .args = surface_;
+    objectStub_ .isRemote = false;
+    sid_.handle = IPC_INVALID_HANDLE;
+    sid_.token = SERVICE_TYPE_ANONYMOUS;
+    sid_.cookie = reinterpret_cast<uintptr_t>(&objectStub_);
 
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 1);
-    IpcIoPushSvc(&io, &sid_);
+    WriteRemoteObject(&io, &sid_);
     CallBackPara para = {};
     para.funcId = LiteWMS_Screenshot;
-    ret = proxy_->Invoke(proxy_, LiteWMS_Screenshot, &io, &para, Callback);
+    int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Screenshot, &io, &para, Callback);
     if (ret != 0) {
         GRAPHIC_LOGE("Screenshot failed, ret=%d", ret);
     }
