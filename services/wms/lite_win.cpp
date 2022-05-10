@@ -57,10 +57,12 @@ LiteWindow::LiteWindow(const LiteWinConfig& config)
 LiteWindow::~LiteWindow()
 {
     if (needUnregister_) {
-        GRAPHIC_LOGI("UnregisterIpcCallback");
-        UnregisterIpcCallback(sid_);
+        GRAPHIC_LOGI("release svc cookie");
+        if (sid_.cookie != 0) {
+            delete reinterpret_cast<IpcObjectStub*>(sid_.cookie);
+            sid_.cookie = 0;
+        }
     }
-
     if (surface_ != nullptr) {
         if (backBuf_ != nullptr) {
             surface_->CancelBuffer(backBuf_);

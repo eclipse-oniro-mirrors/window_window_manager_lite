@@ -19,7 +19,7 @@
 #include "input_event_distributer.h"
 #include "gfx_utils/input_event_info.h"
 #include "input_manager_service.h"
-#include "liteipc_adapter.h"
+#include "ipc_skeleton.h"
 #include "serializer.h"
 #include <pthread.h>
 #include <map>
@@ -62,7 +62,7 @@ private:
     void OnRawEvent(const RawEvent& event) override;
     void AddListener(const void* origin, IpcIo* req, IpcIo* reply);
     void RemoveListener(const void* origin, IpcIo* req, IpcIo* reply);
-    static int32_t DeathCallback(const IpcContext* context, void* ipcMsg, IpcIo* data, void* origin);
+    static void DeathCallback(void* origin);
 };
 }
 #endif

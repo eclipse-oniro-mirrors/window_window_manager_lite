@@ -17,9 +17,8 @@
 #define GRAPHIC_LITE_IMS_CLIENT_PROXY_H
 
 #include <iproxy_client.h>
-
+#include "ipc_skeleton.h"
 #include "gfx_utils/input_event_info.h"
-#include "liteipc_adapter.h"
 
 namespace OHOS {
 class InputEventListenerProxy {
@@ -71,7 +70,7 @@ private:
     ~InputEventListenerProxy();
 
     bool GetIClientProxy();
-    static int32_t ReceiveMsgHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg);
+    static int32_t ReceiveMsgHandler(uint32_t code, IpcIo* io, IpcIo* reply, MessageOption option);
 
     IClientProxy* proxy_;
     static RawEventListener* listener_;
