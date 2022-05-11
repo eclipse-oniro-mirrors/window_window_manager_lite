@@ -18,6 +18,7 @@
 #include "samgr_lite.h"
 
 namespace OHOS {
+static IpcObjectStub objectStub;
 InputEventListenerProxy::RawEventListener* InputEventListenerProxy::listener_ = nullptr;
 InputEventListenerProxy::~InputEventListenerProxy()
 {
@@ -50,20 +51,18 @@ bool InputEventListenerProxy::GetIClientProxy()
     return true;
 }
 
-int32_t InputEventListenerProxy::ReceiveMsgHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg)
+int32_t InputEventListenerProxy::ReceiveMsgHandler(uint32_t code, IpcIo* io, IpcIo* reply, MessageOption option)
 {
     if (listener_ == nullptr) {
         return -1;
     }
-    uint32_t size;
-    RawEvent* eventTemp = static_cast<RawEvent*>(IpcIoPopFlatObj(io, &size));
+    RawEvent* eventTemp = static_cast<RawEvent*>(ReadRawData(io, sizeof(RawEvent)));
     if (eventTemp == nullptr) {
         GRAPHIC_LOGE("pop raw event failed.");
         return -1;
     }
     RawEvent event = *eventTemp;
     listener_->OnRawEvent(event);
-    FreeBuffer(nullptr, ipcMsg);
     return 0;
 }
 
@@ -81,13 +80,16 @@ bool InputEventListenerProxy::RegisterInputEventListener(RawEventListener* liste
     IpcIo io;
     uint8_t tmpData[IMS_DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, IMS_DEFAULT_IPC_SIZE, 1);
+    
     SvcIdentity svc;
-    if (RegisterIpcCallback(ReceiveMsgHandler, 0, IPC_WAIT_FOREVER, &svc, NULL) != LITEIPC_OK) {
-        GRAPHIC_LOGE("RegisterIpcCallback failed.");
-        return false;
-    }
-    IpcIoPushSvc(&io, &svc);
-    IpcIoPushBool(&io, listener->IsAlwaysInvoke());
+    objectStub.func = ReceiveMsgHandler;
+    objectStub.args = nullptr;
+    objectStub.isRemote = false;
+    svc.handle = IPC_INVALID_HANDLE;
+    svc.token = SERVICE_TYPE_ANONYMOUS;
+    svc.cookie = reinterpret_cast<uintptr_t>(&objectStub);
+    WriteRemoteObject(&io, &svc);
+    WriteBool(&io, listener->IsAlwaysInvoke());
     int32_t ret = proxy_->Invoke(proxy_, LITEIMS_CLIENT_REGISTER, &io, NULL, NULL);
     if (ret != 0) {
         GRAPHIC_LOGE("Client register failed, ret=%d", ret);

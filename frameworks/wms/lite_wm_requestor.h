@@ -21,15 +21,15 @@
 #include "iwindows_manager.h"
 #include "lite_win_requestor.h"
 #include "lite_wm_type.h"
-#include "liteipc_adapter.h"
+#include "ipc_skeleton.h"
 
 namespace OHOS {
 class LiteWMRequestor : public IBufferConsumerListener {
 public:
     static LiteWMRequestor* GetInstance();
     static int Callback(void* owner, int code, IpcIo* reply);
-    static int32_t WmsMsgHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg);
-    static int32_t SurfaceRequestHandler(const IpcContext* context, void* ipcMsg, IpcIo* io, void* arg);
+    static int32_t WmsMsgHandler(uint32_t code, IpcIo* data, IpcIo* reply, MessageOption option);
+    static int32_t SurfaceRequestHandler(uint32_t code, IpcIo* data, IpcIo* reply, MessageOption option);
 
     virtual void OnBufferAvailable() override;
 
@@ -54,6 +54,7 @@ private:
     IWindowsManager::ScreenshotListener* listener_;
     Surface* surface_;
     SvcIdentity sid_;
+    IpcObjectStub objectStub_;
     LiteLayerInfo layerInfo_;
 };
 } // namespace OHOS

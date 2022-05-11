@@ -22,7 +22,7 @@
 #include "gfx_utils/geometry2d.h"
 #include "isurface.h"
 #include "lite_wm_type.h"
-#include "liteipc_adapter.h"
+#include "ipc_skeleton.h"
 #include "serializer.h"
 #include "surface.h"
 
@@ -102,6 +102,7 @@ private:
     SurfaceBuffer* backBuf_;
     pthread_mutex_t backBufMutex_;
     SvcIdentity sid_;
+    IpcObjectStub objectStub_;
     bool needUnregister_;
 };
 }

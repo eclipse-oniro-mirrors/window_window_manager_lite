@@ -49,8 +49,9 @@ int LiteWinRequestor::Callback(void* owner, int code, IpcIo* reply)
     switch (para->funcId) {
         case LiteWMS_GetSurface: {
             LiteWinRequestor* requestor = (LiteWinRequestor*)(para->data);
-            int32_t ret = IpcIoPopInt32(reply);
-            if ((ret == LITEIPC_OK) && (requestor != nullptr)) {
+            int32_t ret;
+            ReadInt32(reply, &ret);
+            if ((ret == LiteWMS_EOK) && (requestor != nullptr)) {
                 requestor->GenericSurface(reply);
             }
             break;
@@ -72,7 +73,7 @@ Surface* LiteWinRequestor::GetSurface()
         IpcIo io;
         uint8_t tmpData[DEFAULT_IPC_SIZE];
         IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-        IpcIoPushInt32(&io, id_);
+        WriteInt32(&io, id_);
 
         CallBackPara para = {};
         para.funcId = LiteWMS_GetSurface;
@@ -90,7 +91,7 @@ void LiteWinRequestor::Show()
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushInt32(&io, id_);
+    WriteInt32(&io, id_);
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Show, &io, NULL, NULL);
     if (ret != 0) {
@@ -103,7 +104,7 @@ void LiteWinRequestor::Hide()
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushInt32(&io, id_);
+    WriteInt32(&io, id_);
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Hide, &io, NULL, NULL);
     if (ret != 0) {
@@ -116,7 +117,7 @@ void LiteWinRequestor::RaiseToTop()
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushInt32(&io, id_);
+    WriteInt32(&io, id_);
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_RaiseToTop, &io, NULL, NULL);
     if (ret != 0) {
@@ -129,7 +130,7 @@ void LiteWinRequestor::LowerToBottom()
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushInt32(&io, id_);
+    WriteInt32(&io, id_);
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_LowerToBottom, &io, NULL, NULL);
     if (ret != 0) {
@@ -142,9 +143,9 @@ void LiteWinRequestor::MoveTo(int16_t x, int16_t y)
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushInt32(&io, id_);
-    IpcIoPushUint32(&io, x);
-    IpcIoPushUint32(&io, y);
+    WriteInt32(&io, id_);
+    WriteUint32(&io, x);
+    WriteUint32(&io, y);
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_MoveTo, &io, NULL, NULL);
     if (ret != 0) {
@@ -157,9 +158,9 @@ void LiteWinRequestor::Resize(int16_t width, int16_t height)
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushInt32(&io, id_);
-    IpcIoPushUint32(&io, width);
-    IpcIoPushUint32(&io, height);
+    WriteInt32(&io, id_);
+    WriteUint32(&io, width);
+    WriteUint32(&io, height);
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Resize, &io, NULL, Callback);
     if (ret != 0) {
@@ -172,7 +173,7 @@ void LiteWinRequestor::Update()
     IpcIo io;
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 0);
-    IpcIoPushInt32(&io, id_);
+    WriteInt32(&io, id_);
 
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_Update, &io, NULL, NULL);
     if (ret != 0) {
