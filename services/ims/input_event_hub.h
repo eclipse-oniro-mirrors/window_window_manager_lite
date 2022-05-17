@@ -61,7 +61,7 @@ public:
 
 private:
     static InputDevType GetDeviceType(uint32_t devIndex);
-    static void EventCallback(const EventPackage **pkgs, uint32_t count, uint32_t devIndex);
+    static void EventCallback(const InputEventPackage **pkgs, uint32_t count, uint32_t devIndex);
     uint8_t ScanInputDevice();
     InputEventHub();
     ~InputEventHub() {}
