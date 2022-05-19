@@ -118,7 +118,7 @@ void InputEventHub::TearDown()
     }
 }
 
-void InputEventHub::EventCallback(const EventPackage **pkgs, uint32_t count, uint32_t devIndex)
+void InputEventHub::EventCallback(const InputEventPackage **pkgs, uint32_t count, uint32_t devIndex)
 {
     if (pkgs == nullptr || readCallback_ == nullptr || count == 0) {
         return;
