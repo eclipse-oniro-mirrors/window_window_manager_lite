@@ -21,6 +21,7 @@
 #include "surface_impl.h"
 
 namespace OHOS {
+static IpcObjectStub objectStub;
 LiteWMRequestor* LiteWMRequestor::GetInstance()
 {
     static LiteWMRequestor requestor;
@@ -98,23 +99,18 @@ void LiteWMRequestor::ClientRegister()
     uint8_t tmpData[DEFAULT_IPC_SIZE];
     IpcIoInit(&io, tmpData, DEFAULT_IPC_SIZE, 1);
 
-    IpcObjectStub* objectStub = new IpcObjectStub();
-    if (objectStub == nullptr) {
-        return;
-    }
     SvcIdentity svc;
-    objectStub->func = WmsMsgHandler;
-    objectStub->args = nullptr;
-    objectStub->isRemote = false;
+    objectStub.func = WmsMsgHandler;
+    objectStub.args = nullptr;
+    objectStub.isRemote = false;
     svc.handle = IPC_INVALID_HANDLE;
     svc.token = SERVICE_TYPE_ANONYMOUS;
-    svc.cookie = reinterpret_cast<uintptr_t>(objectStub);
+    svc.cookie = reinterpret_cast<uintptr_t>(&objectStub);
     WriteRemoteObject(&io, &svc);
     int32_t ret = proxy_->Invoke(proxy_, LiteWMS_ClientRegister, &io, NULL, Callback);
     if (ret != 0) {
         GRAPHIC_LOGE("ClientRegister failed, ret=%d", ret);
     }
-    delete objectStub;
 }
 
 void LiteWMRequestor::GetLayerInfo()
