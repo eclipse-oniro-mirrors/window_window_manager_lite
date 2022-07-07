@@ -23,7 +23,6 @@
       ],
       "components": [
         "hilog_lite",
-        "ipc_lite",
         "samgr_lite",
         "surface",
         "peripheral_display",
