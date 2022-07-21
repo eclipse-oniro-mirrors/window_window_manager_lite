@@ -27,8 +27,8 @@ ndk_lib("lite_wms_ndk") {
 }
 
 commonDeps = [
-  "//foundation/distributedschedule/samgr_lite/samgr:samgr",
-  "//foundation/distributedschedule/samgr_lite/communication/broadcast:broadcast",
+  "//foundation/systemabilitymgr/samgr_lite/samgr:samgr",
+  "//foundation/systemabilitymgr/samgr_lite/communication/broadcast:broadcast",
   "//foundation/communication/ipc/interfaces/innerkits/c/ipc:ipc_single",
   "//foundation/graphic/surface:surface",
   "//foundation/graphic/utils:lite_graphic_utils",
