@@ -38,7 +38,7 @@ public:
     void Resize(int16_t width, int16_t height);
     void Update();
 
-    int32_t GetWindowId()
+    int32_t GetWindowId() const
     {
         return id_;
     }
