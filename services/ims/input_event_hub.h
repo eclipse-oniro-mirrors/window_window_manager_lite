@@ -50,7 +50,7 @@ public:
      *
      * @returns return -1: register callback failed; return 0: register success.
      */
-    int32_t RegisterReadCallback(ReadCallback callback)
+    static int32_t RegisterReadCallback(const ReadCallback &callback)
     {
         if (callback == nullptr) {
             return -1;

@@ -38,20 +38,20 @@ private:
     static int32_t SurfaceRequestHandler(uint32_t code, IpcIo *data, IpcIo *reply, MessageOption option);
     static void DeathCallback(void* arg);
 
-    void GetSurface(IpcIo* req, IpcIo* reply);
-    void Show(IpcIo* req, IpcIo* reply);
-    void Hide(IpcIo* req, IpcIo* reply);
-    void RaiseToTop(IpcIo* req, IpcIo* reply);
-    void LowerToBottom(IpcIo* req, IpcIo* reply);
-    void MoveTo(IpcIo* req, IpcIo* reply);
-    void Resize(IpcIo* req, IpcIo* reply);
-    void Update(IpcIo* req, IpcIo* reply);
-    void CreateWindow(IpcIo* req, IpcIo* reply);
-    void RemoveWindow(IpcIo* req, IpcIo* reply);
-    void GetEventData(IpcIo* req, IpcIo* reply);
-    void Screenshot(IpcIo* req, IpcIo* reply);
-    void ClientRegister(IpcIo* req, IpcIo* reply);
-    void GetLayerInfo(IpcIo* req, IpcIo* reply);
+    static void GetSurface(IpcIo* req, IpcIo* reply);
+    static void Show(IpcIo* req, IpcIo* reply);
+    static void Hide(IpcIo* req, IpcIo* reply);
+    static void RaiseToTop(IpcIo* req, IpcIo* reply);
+    static void LowerToBottom(IpcIo* req, IpcIo* reply);
+    static void MoveTo(IpcIo* req, IpcIo* reply);
+    static void Resize(IpcIo* req, IpcIo* reply);
+    static void Update(IpcIo* req, IpcIo* reply);
+    static void CreateWindow(IpcIo* req, IpcIo* reply);
+    static void RemoveWindow(IpcIo* req, IpcIo* reply);
+    static void GetEventData(IpcIo* req, IpcIo* reply);
+    static void Screenshot(IpcIo* req, IpcIo* reply);
+    static void ClientRegister(IpcIo* req, IpcIo* reply);
+    static void GetLayerInfo(IpcIo* req, IpcIo* reply);
 };
 } // namespace OHOS
 #endif
