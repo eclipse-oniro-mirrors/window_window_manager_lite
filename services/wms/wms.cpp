@@ -14,6 +14,7 @@
  */
 
 #include "hals/gfx_engines.h"
+#include "gfx_utils/common_macros.h"
 #include "gfx_utils/graphic_log.h"
 #include "graphic_performance.h"
 #include "hals/hi_fbdev.h"
@@ -22,7 +23,7 @@
 
 #include "lite_wm.h"
 
-extern "C" void __attribute__((weak)) HOS_SystemInit(void)
+extern "C" void UI_WEAK_SYMBOL HOS_SystemInit(void)
 {
     SAMGR_Bootstrap();
 }
