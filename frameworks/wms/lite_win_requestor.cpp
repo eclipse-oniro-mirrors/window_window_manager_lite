@@ -48,7 +48,7 @@ int LiteWinRequestor::Callback(void* owner, int code, IpcIo* reply)
     GRAPHIC_LOGD("Callback, funcId = %d", para->funcId);
     switch (para->funcId) {
         case LiteWMS_GetSurface: {
-            LiteWinRequestor* requestor = (LiteWinRequestor*)(para->data);
+            LiteWinRequestor* requestor = static_cast<LiteWinRequestor*>(para->data);
             int32_t ret;
             ReadInt32(reply, &ret);
             if ((ret == LiteWMS_EOK) && (requestor != nullptr)) {

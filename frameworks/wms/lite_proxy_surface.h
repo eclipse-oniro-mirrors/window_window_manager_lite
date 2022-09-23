@@ -23,7 +23,7 @@
 namespace OHOS {
 class LiteProxySurface : public ISurface {
 public:
-    LiteProxySurface(Surface* surface);
+    explicit LiteProxySurface(Surface* surface);
     virtual ~LiteProxySurface();
 
     virtual void Lock(void** buf, void** phyMem, uint32_t* strideLen) override;

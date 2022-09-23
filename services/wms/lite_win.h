@@ -38,7 +38,7 @@ public:
         return id_;
     }
 
-    const LiteWinConfig& GetConfig()
+    const LiteWinConfig& GetConfig() const
     {
         return config_;
     }
@@ -54,7 +54,7 @@ public:
         isShow_ = isShow;
     }
 
-    bool GetIsShow()
+    bool GetIsShow() const
     {
         return isShow_;
     }
@@ -64,17 +64,17 @@ public:
         pid_ = pid;
     }
 
-    pid_t GetPid()
+    pid_t GetPid() const
     {
         return pid_;
     }
 
-    bool IsCoverMode()
+    bool IsCoverMode() const
     {
         return config_.compositeMode == LiteWinConfig::COPY;
     }
 
-    bool NoNeedToDraw()
+    bool NoNeedToDraw() const
     {
         return config_.compositeMode == LiteWinConfig::BLEND && config_.opacity == OPA_TRANSPARENT;
     }
@@ -90,7 +90,7 @@ public:
     void Resize(int16_t width, int16_t height);
 private:
     bool CreateSurface();
-    void ReleaseSurface();
+    static void ReleaseSurface();
     void FlushWithModeCopy(const Rect& srcRect, const LiteSurfaceData* layerData, int16_t dx, int16_t dy);
     void FlushWithModeBlend(const Rect& srcRect, const LiteSurfaceData* layerData, int16_t dx, int16_t dy);
 
