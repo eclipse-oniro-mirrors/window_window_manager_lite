@@ -40,11 +40,11 @@ IWindow* LiteProxyWindowsManager::CreateWindow(const LiteWinConfig& config)
     }
 }
 
-void LiteProxyWindowsManager::RemoveWindow(IWindow* window)
+void LiteProxyWindowsManager::RemoveWindow(IWindow* win)
 {
-    if (window != nullptr) {
-        int32_t id = window->GetWindowId();
-        delete window;
+    if (win != nullptr) {
+        int32_t id = win->GetWindowId();
+        delete win;
         LiteWMRequestor::GetInstance()->RemoveWindow(id);
     }
 }

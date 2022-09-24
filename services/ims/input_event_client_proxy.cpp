@@ -92,7 +92,7 @@ void InputEventClientProxy::OnRawEvent(const RawEvent& event)
     WriteRawData(&io, static_cast<const void*>(&event), sizeof(RawEvent));
     pthread_mutex_lock(&lock_);
     std::map<pid_t, ClientInfo>::iterator it;
-    for (it = clientInfoMap_.begin(); it != clientInfoMap_.end(); it++) {
+    for (it = clientInfoMap_.begin(); it != clientInfoMap_.end(); ++it) {
         if (it->second.alwaysInvoke || (event.state != lastState_)) {
             MessageOption option;
             MessageOptionInit(&option);

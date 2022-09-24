@@ -107,9 +107,7 @@ bool InputEventListenerProxy::UnregisterInputEventListener()
         IpcIoInit(&io, tmpData, IMS_DEFAULT_IPC_SIZE, 1);
         int32_t ret = proxy_->Invoke(proxy_, LITEIMS_CLIENT_UNREGISTER, &io, NULL, NULL);
         if (ret == 0) {
-            if (listener_ != nullptr) {
-                listener_ = nullptr;
-            }
+            listener_ = nullptr;
             return true;
         }
     }

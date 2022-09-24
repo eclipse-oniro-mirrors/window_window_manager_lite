@@ -35,12 +35,12 @@ public:
     /**
      * Init input manager service.
      */
-    void Run();
+    static void Run();
 
     /**
      * Delete input manager service.
      */
-    void Stop();
+    static void Stop();
 
     /**
      * @brief Distribute task function.
