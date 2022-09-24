@@ -79,6 +79,9 @@ executable("wms_server") {
   include_dirs = [
     "frameworks/ims",
     "interfaces/innerkits",
+    "//base/security/permission_lite/services/pms_client/include",
+    "//base/security/permission_lite/interfaces/innerkits",
+    "//base/security/permission_lite/interfaces/kits",
     "//drivers/peripheral/input/interfaces/include",
     "//third_party/FreeBSD/sys/dev/evdev",
   ]
@@ -91,6 +94,7 @@ executable("wms_server") {
     "-ldisplay_layer",
   ]
   deps = [
+    "//base/security/permission_lite/services/pms_client:pms_client",
     "//drivers/peripheral/input/hal:hdi_input",
     "//foundation/graphic/utils:lite_graphic_hals",
   ]
