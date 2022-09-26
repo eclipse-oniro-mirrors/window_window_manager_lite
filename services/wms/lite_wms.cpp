@@ -17,6 +17,7 @@
 #include "gfx_utils/graphic_log.h"
 #include "lite_wm.h"
 #include "lite_wm_type.h"
+#include "pms_interface.h"
 #include "surface.h"
 #include "surface_impl.h"
 
@@ -214,6 +215,13 @@ void LiteWMS::GetEventData(IpcIo* req, IpcIo* reply)
 
 void LiteWMS::Screenshot(IpcIo* req, IpcIo* reply)
 {
+    const char *writeMediaImagePermissionName = "ohos.permission.WRITE_MEDIA_IMAGES";
+    pid_t uid = GetCallingUid();
+    if (CheckPermission(uid, writeMediaImagePermissionName) != GRANTED) {
+        GRAPHIC_LOGE("permission denied");
+        WriteInt32(reply, LiteWMS_EUNKNOWN);
+        return;
+    }
     Surface* surface = SurfaceImpl::GenericSurfaceByIpcIo(*req);
     bool ret = LiteWM::GetInstance()->OnScreenshot(surface);
     WriteInt32(reply, ret ? LiteWMS_EOK : LiteWMS_EUNKNOWN);
