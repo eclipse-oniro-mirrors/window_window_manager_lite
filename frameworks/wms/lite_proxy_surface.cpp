@@ -45,7 +45,7 @@ void LiteProxySurface::Lock(void** buf, void** phyMem, uint32_t* strideLen)
     }
     *buf = buffer_->GetVirAddr();
     uintptr_t phyAddr = buffer_->GetPhyAddr();
-    *phyMem = (void*)phyAddr;
+    *phyMem = reinterpret_cast<void*>(phyAddr);
     *strideLen = surface_->GetStride();
     GRAPHIC_LOGI("strideLen=%d", *strideLen);
 }
