@@ -44,7 +44,7 @@ int LiteWinRequestor::Callback(void* owner, int code, IpcIo* reply)
         return -1;
     }
 
-    CallBackPara* para = (CallBackPara*)owner;
+    CallBackPara* para = static_cast<CallBackPara*>(owner);
     GRAPHIC_LOGD("Callback, funcId = %d", para->funcId);
     switch (para->funcId) {
         case LiteWMS_GetSurface: {

@@ -39,10 +39,10 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
         return -1;
     }
 
-    CallBackPara* para = (CallBackPara*)owner;
+    CallBackPara* para = static_cast<CallBackPara*>(owner);
     switch (para->funcId) {
         case LiteWMS_CreateWindow: {
-            LiteWinRequestor** requestor = (LiteWinRequestor**)(para->data);
+            LiteWinRequestor** requestor = static_cast<LiteWinRequestor**>(para->data);
             if (requestor == nullptr) {
                 break;
             }
@@ -58,7 +58,7 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
         }
         case LiteWMS_GetEventData: {
             DeviceData* data = static_cast<DeviceData*>(ReadRawData(reply, sizeof(DeviceData)));
-            DeviceData* retData = (DeviceData*)(para->data);
+            DeviceData* retData = static_cast<DeviceData*>(para->data);
             if (data != nullptr && retData != nullptr) {
                 *retData = *data;
             }
@@ -75,7 +75,7 @@ int LiteWMRequestor::Callback(void* owner, int code, IpcIo* reply)
         }
         case LiteWMS_GetLayerInfo: {
             LiteLayerInfo* data = static_cast<LiteLayerInfo*>(ReadRawData(reply, sizeof(LiteLayerInfo)));
-            LiteLayerInfo* retData = (LiteLayerInfo*)(para->data);
+            LiteLayerInfo* retData = static_cast<LiteLayerInfo*>(para->data);
             if (data != nullptr && retData != nullptr) {
                 *retData = *data;
             }
@@ -174,7 +174,7 @@ void LiteWMRequestor::GetEventData(DeviceData* data)
 
 int LiteWMRequestor::SurfaceRequestHandler(uint32_t code, IpcIo* data, IpcIo* reply, MessageOption option)
 {
-    SurfaceImpl* surface = (SurfaceImpl*)(option.args);
+    SurfaceImpl* surface = reinterpret_cast<SurfaceImpl*>(option.args);
     if (surface == nullptr) {
         return 0;
     }
