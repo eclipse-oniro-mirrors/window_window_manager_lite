@@ -50,7 +50,7 @@ LiteWindow::LiteWindow(const LiteWinConfig& config)
     : id_(INVALID_WINDOW_ID), pid_(INVALID_PID), isShow_(false), config_(config), surface_(nullptr),
       backBuf_(nullptr), sid_({}), needUnregister_(false)
 {
-    pthread_mutex_init(&backBufMutex_, NULL);
+    pthread_mutex_init(&backBufMutex_, nullptr);
     id_ = LiteWM::GetInstance()->GetUniqueWinId();
 }
 

@@ -26,8 +26,8 @@ public:
     explicit LiteProxySurface(Surface* surface);
     virtual ~LiteProxySurface();
 
-    virtual void Lock(void** buf, void** phyMem, uint32_t* strideLen) override;
-    virtual void Unlock() override;
+    void Lock(void** buf, void** phyMem, uint32_t* strideLen) override;
+    void Unlock() override;
 
 private:
     SurfaceBuffer* buffer_;
