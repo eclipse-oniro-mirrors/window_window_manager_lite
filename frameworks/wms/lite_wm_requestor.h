@@ -31,7 +31,7 @@ public:
     static int32_t WmsMsgHandler(uint32_t code, IpcIo* data, IpcIo* reply, MessageOption option);
     static int32_t SurfaceRequestHandler(uint32_t code, IpcIo* data, IpcIo* reply, MessageOption option);
 
-    virtual void OnBufferAvailable() override;
+    void OnBufferAvailable() override;
 
     void ClientRegister();
     void GetLayerInfo();

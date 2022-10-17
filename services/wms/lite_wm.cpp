@@ -101,9 +101,9 @@ LiteWM::LiteWM()
       needScreenshot_(false), screenshotSurface_(nullptr), winIdStorage(0)
 {
     InitMutex(stackLock_, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&mouseLock_, NULL);
-    pthread_mutex_init(&eventLock_, NULL);
-    pthread_mutex_init(&screenshotMutex_, NULL);
+    pthread_mutex_init(&mouseLock_, nullptr);
+    pthread_mutex_init(&eventLock_, nullptr);
+    pthread_mutex_init(&screenshotMutex_, nullptr);
 
     InputManagerService::GetInstance()->GetDistributer()->AddRawEventListener(this);
     InitMouseCursor();
