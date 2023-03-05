@@ -39,7 +39,7 @@ The graphics service uses the client/server \(C/S\) architecture and is divided 
 
 ```
 # Generate the wms_server and libwms_client.so files in the out directory of the product folder through GN compilation.
-hb build lite_wms
+hb build window_manager_lite
 ```
 
 ## Description<a name="section1312121216216"></a>
