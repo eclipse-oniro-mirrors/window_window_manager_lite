@@ -108,7 +108,7 @@ public:
             case CONDITION3: {
                 Window* window = g_rootView2->GetBoundWindow();
                 if (window != nullptr) {
-                    Window::DestoryWindow(window);
+                    Window::DestroyWindow(window);
                 } else {
                     g_rootView2->Invalidate();
                     CreateDefaultWindow(g_rootView2, 70, 75); // 70: x, 75: y
@@ -239,10 +239,10 @@ void TestWindowNumLimit()
         GRAPHIC_LOGI("CreateDefaultWindow, i = %d", i);
         if (i == 10) { // 10, 9: Delete the tenth window in the 11th loop.
             Window* window = g_rootViewList[9]->GetBoundWindow();
-            Window::DestoryWindow(window);
+            Window::DestroyWindow(window);
         } else if (i == 15) { // 15, 5: Delete the sixth window in the 16th loop.
             Window* window = g_rootViewList[5]->GetBoundWindow();
-            Window::DestoryWindow(window);
+            Window::DestroyWindow(window);
         }
         RootView* rootView = RootView::GetWindowRootView();
         g_rootViewList[i] = rootView;
