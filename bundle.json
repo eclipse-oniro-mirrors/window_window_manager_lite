@@ -31,8 +31,8 @@
     },
     "build": {
       "sub_component": [
-        "//foundation/graphic/wms:lite_wms",
-        "//foundation/graphic/wms/test:lite_wms_test"
+        "//foundation/graphic/wms:window_manager_lite",
+        "//foundation/graphic/wms/test:window_manager_lite_test"
       ],
       "inner_kits": [],
       "test": []

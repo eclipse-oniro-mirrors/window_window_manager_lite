@@ -12,7 +12,7 @@
 import("//build/lite/config/component/lite_component.gni")
 import("//build/lite/ndk/ndk.gni")
 
-lite_component("lite_wms") {
+lite_component("window_manager_lite") {
   features = [
     ":wms_server",
     ":wms_client",
@@ -20,7 +20,7 @@ lite_component("lite_wms") {
   public_deps = [ ":wms_client" ]
 }
 
-ndk_lib("lite_wms_ndk") {
+ndk_lib("window_manager_lite_ndk") {
   lib_extension = ".so"
   deps = [ ":wms_client" ]
   head_files = []
@@ -31,7 +31,7 @@ commonDeps = [
   "//foundation/systemabilitymgr/samgr_lite/communication/broadcast:broadcast",
   "//foundation/communication/ipc/interfaces/innerkits/c/ipc:ipc_single",
   "//foundation/graphic/surface:surface",
-  "//foundation/graphic/utils:lite_graphic_utils",
+  "//foundation/graphic/utils:graphic_utils_lite",
   "//third_party/bounds_checking_function:libsec_shared",
 ]
 
@@ -47,7 +47,7 @@ shared_library("wms_client") {
     "frameworks/wms/lite_wms_client.cpp",
   ]
   deps = commonDeps
-  public_deps = [ "//foundation/graphic/surface:lite_surface" ]
+  public_deps = [ "//foundation/graphic/surface:surface_lite" ]
   public_configs = [ ":wms_public_config" ]
   ldflags = [ "-lstdc++" ]
   cflags = [ "-Wall" ]
