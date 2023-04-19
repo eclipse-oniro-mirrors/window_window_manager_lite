@@ -26,8 +26,8 @@ if (ohos_build_type == "debug") {
   executable("sample_ui") {
     sources = [ "sample_ui.cpp" ]
     include_dirs = [
-      "//foundation/graphic/ui/frameworks",
-      "//foundation/graphic/ui/test/framework",
+      "//foundation/arkui/ui_lite/frameworks",
+      "//foundation/arkui/ui_lite/test/framework",
       "//third_party/freetype/include",
     ]
     ldflags = [
@@ -37,9 +37,9 @@ if (ohos_build_type == "debug") {
     ]
 
     deps = [
-      "//foundation/graphic/ui/test/framework:lite_graphic_test_framework",
-      "//foundation/graphic/utils:lite_graphic_hals",
-      "//foundation/graphic/wms:wms_client",
+      "//foundation/arkui/ui_lite/test/framework:lite_graphic_test_framework",
+      "//foundation/graphic/graphic_utils_lite:lite_graphic_hals",
+      "//foundation/window/window_manager_lite:wms_client",
     ]
     output_dir = "$root_out_dir/dev_tools"
   }
@@ -47,8 +47,8 @@ if (ohos_build_type == "debug") {
   executable("sample_auto_ui") {
     sources = [ "sample_ui.cpp" ]
     include_dirs = [
-      "//foundation/graphic/ui/frameworks",
-      "//foundation/graphic/ui/test/framework",
+      "//foundation/arkui/ui_lite/frameworks",
+      "//foundation/arkui/ui_lite/test/framework",
       "//third_party/freetype/include",
     ]
     ldflags = [
@@ -57,9 +57,9 @@ if (ohos_build_type == "debug") {
       "-Wl,-rpath-link=$ohos_root_path/$root_out_dir",
     ]
     deps = [
-      "//foundation/graphic/ui/test/framework:auto_framework",
-      "//foundation/graphic/utils:lite_graphic_hals",
-      "//foundation/graphic/wms:wms_client",
+      "//foundation/arkui/ui_lite/test/framework:auto_framework",
+      "//foundation/graphic/graphic_utils_lite:lite_graphic_hals",
+      "//foundation/window/window_manager_lite:wms_client",
     ]
 
     output_dir = "$root_out_dir/dev_tools"
@@ -67,13 +67,13 @@ if (ohos_build_type == "debug") {
 
   executable("sample_window") {
     sources = [
-      "//foundation/graphic/ui/test/framework/common/ui_text_language.cpp",
+      "//foundation/arkui/ui_lite/test/framework/common/ui_text_language.cpp",
       "sample_window.cpp",
     ]
     include_dirs = [
-      "//foundation/graphic/ui/frameworks",
-      "//foundation/graphic/ui/test/framework",
-      "//foundation/graphic/surface/interfaces/kits",
+      "//foundation/arkui/ui_lite/frameworks",
+      "//foundation/arkui/ui_lite/test/framework",
+      "//foundation/graphic/surface_lite/interfaces/kits",
       "//third_party/freetype/include",
     ]
     ldflags = [
@@ -82,7 +82,7 @@ if (ohos_build_type == "debug") {
       "-Wl,-rpath-link=$ohos_root_path/$root_out_dir",
     ]
 
-    deps = [ "//foundation/graphic/ui:ui_lite" ]
+    deps = [ "//foundation/arkui/ui_lite:ui_lite" ]
     output_dir = "$root_out_dir/dev_tools"
   }
 }

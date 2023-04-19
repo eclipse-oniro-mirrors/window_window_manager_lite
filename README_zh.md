@@ -23,7 +23,7 @@
 ## 目录<a name="section161941989596"></a>
 
 ```
-/foundation/graphic/wms
+/foundation/window/window_manager_lite
 ├── frameworks      # 客户端
 │   ├── ims         # 输入管理客户端
 │   └── wms         # 窗口管理服务客户端
@@ -53,10 +53,10 @@ hb build window_manager_lite
 
 [图形子系统](https://gitee.com/openharmony/docs/blob/master/zh-cn/readme/%E5%9B%BE%E5%BD%A2%E5%AD%90%E7%B3%BB%E7%BB%9F.md)
 
-**graphic_wms**
+**window_manager_lite**
 
-[graphic_surface](https://gitee.com/openharmony/graphic_surface/blob/master/README_zh.md)
+[graphic_surface_lite](https://gitee.com/openharmony/graphic_surface_lite/blob/master/README.md)
 
-[graphic_ui](https://gitee.com/openharmony/graphic_ui/blob/master/README_zh.md)
+[arkui_ui_lite](https://gitee.com/openharmony/arkui_ui_lite/blob/master/README.md)
 
-[graphic_utils](https://gitee.com/openharmony/graphic_utils/blob/master/README_zh.md)
+[graphic_graphic_utils_lite](https://gitee.com/openharmony/graphic_graphic_utils_lite/blob/master/README.md)

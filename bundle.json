@@ -5,14 +5,14 @@
   "license": "Apache License 2.0",
   "pubiishAs": "code-segment",
   "segment": {
-    "destPath": "foundation/graphic/wms"
+    "destPath": "foundation/window/window_manager_lite"
   },
   "dirs": {},
   "scripts": {},
   "component": {
-    "name": "wms",
-    "subsystem": "graphic",
-    "syscap": [ "SystemCapability.Graphic.Wms" ],
+    "name": "window_manager_lite",
+    "subsystem": "window",
+    "syscap": [ "SystemCapability.Window.WindowManagerLite" ],
     "feature": [],
     "adapted_system_type": [ "small" ],
     "rom": "110KB",
@@ -24,15 +24,15 @@
       "components": [
         "hilog_lite",
         "samgr_lite",
-        "surface",
+        "surface_lite",
         "peripheral_display",
         "peripheral_input"
       ]
     },
     "build": {
       "sub_component": [
-        "//foundation/graphic/wms:window_manager_lite",
-        "//foundation/graphic/wms/test:window_manager_lite_test"
+        "//foundation/window/window_manager_lite:window_manager_lite",
+        "//foundation/window/window_manager_lite/test:window_manager_lite_test"
       ],
       "inner_kits": [],
       "test": []
