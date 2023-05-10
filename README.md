@@ -23,7 +23,7 @@ The graphics service uses the client/server \(C/S\) architecture and is divided 
 ## Directory Structure<a name="section161941989596"></a>
 
 ```
-/foundation/graphic/wms
+/foundation/window/window_manager_lite
 ├── frameworks      # Client
 │   ├── ims         # Input event management service client
 │   └── wms         # Window management service client
@@ -53,10 +53,10 @@ hb build window_manager_lite
 
 [Graphic subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/graphics.md)
 
-**graphic_wms**
+**window_manager_lite**
 
-[graphic_surface](https://gitee.com/openharmony/graphic_surface/blob/master/README.md)
+[graphic_surface_lite](https://gitee.com/openharmony/graphic_surface_lite/blob/master/README.md)
 
-[graphic_ui](https://gitee.com/openharmony/graphic_ui/blob/master/README.md)
+[arkui_ui_lite](https://gitee.com/openharmony/arkui_ui_lite/blob/master/README.md)
 
-[graphic_utils](https://gitee.com/openharmony/graphic_utils/blob/master/README.md)
+[graphic_graphic_utils_lite](https://gitee.com/openharmony/graphic_graphic_utils_lite/blob/master/README.md)
