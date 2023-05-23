@@ -1,5 +1,5 @@
 {
-  "name": "@ohos/wms",
+  "name": "@ohos/window_manager_lite",
   "description": "Windows manager service",
   "version": "3.1",
   "license": "Apache License 2.0",
@@ -12,7 +12,6 @@
   "component": {
     "name": "window_manager_lite",
     "subsystem": "window",
-    "syscap": [ "SystemCapability.Window.WindowManagerLite" ],
     "feature": [],
     "adapted_system_type": [ "small" ],
     "rom": "110KB",
