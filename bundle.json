@@ -21,11 +21,14 @@
         "bounds_checking_function"
       ],
       "components": [
-        "hilog_lite",
         "samgr_lite",
         "surface_lite",
-        "peripheral_display",
-        "peripheral_input"
+        "peripheral_input",
+        "ipc",
+        "graphic_utils_lite",
+        "hdf_core",
+        "permission_lite",
+        "ui_lite"
       ]
     },
     "build": {
