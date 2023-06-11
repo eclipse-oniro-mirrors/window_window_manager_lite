@@ -264,9 +264,10 @@ Surface* LiteWindow::GetSurface()
 void LiteWindow::MoveTo(int16_t x, int16_t y)
 {
     GRAPHIC_LOGI("{%d,%d}=>{%d,%d}", config_.rect.GetLeft(), config_.rect.GetTop(), x, y);
-    LiteWM::GetInstance()->UpdateWindowRegion(this, config_.rect);
+    LiteWM* liteWM = LiteWM::GetInstance();
+    liteWM->UpdateWindowRegion(this, config_.rect);
     config_.rect.SetPosition(x, y);
-    LiteWM::GetInstance()->UpdateWindowRegion(this, config_.rect);
+    liteWM->UpdateWindowRegion(this, config_.rect);
 }
 
 void LiteWindow::Resize(int16_t width, int16_t height)
