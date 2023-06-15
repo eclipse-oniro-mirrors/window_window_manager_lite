@@ -25,8 +25,9 @@ int LiteProxyWindowsManager::Init()
 {
     GRAPHIC_LOGI("Init");
     LiteWMSClient::GetInstance()->InitLiteWMSClient();
-    LiteWMRequestor::GetInstance()->ClientRegister();
-    LiteWMRequestor::GetInstance()->GetLayerInfo();
+    LiteWMRequestor* requestor = LiteWMRequestor::GetInstance();
+    requestor->ClientRegister();
+    requestor->GetLayerInfo();
     return 0;
 }
 
