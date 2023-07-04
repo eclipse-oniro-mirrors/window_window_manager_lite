@@ -23,12 +23,11 @@
       "components": [
         "samgr_lite",
         "surface_lite",
-        "peripheral_input",
+        "drivers_peripheral_input",
         "ipc",
         "graphic_utils_lite",
         "hdf_core",
-        "permission_lite",
-        "ui_lite"
+        "permission_lite"
       ]
     },
     "build": {
