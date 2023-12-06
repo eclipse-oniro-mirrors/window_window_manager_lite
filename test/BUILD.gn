@@ -28,7 +28,6 @@ if (ohos_build_type == "debug") {
     include_dirs = [
       "//foundation/arkui/ui_lite/frameworks",
       "//foundation/arkui/ui_lite/test/framework",
-      "//third_party/freetype/include",
     ]
     ldflags = [
       "-lstdc++",
@@ -40,6 +39,7 @@ if (ohos_build_type == "debug") {
       "//foundation/arkui/ui_lite/test/framework:lite_graphic_test_framework",
       "//foundation/graphic/graphic_utils_lite:lite_graphic_hals",
       "//foundation/window/window_manager_lite:wms_client",
+      "//third_party/freetype:freetype",
     ]
     output_dir = "$root_out_dir/dev_tools"
   }
@@ -49,7 +49,6 @@ if (ohos_build_type == "debug") {
     include_dirs = [
       "//foundation/arkui/ui_lite/frameworks",
       "//foundation/arkui/ui_lite/test/framework",
-      "//third_party/freetype/include",
     ]
     ldflags = [
       "-lstdc++",
@@ -60,6 +59,7 @@ if (ohos_build_type == "debug") {
       "//foundation/arkui/ui_lite/test/framework:auto_framework",
       "//foundation/graphic/graphic_utils_lite:lite_graphic_hals",
       "//foundation/window/window_manager_lite:wms_client",
+      "//third_party/freetype:freetype",
     ]
 
     output_dir = "$root_out_dir/dev_tools"
@@ -74,7 +74,6 @@ if (ohos_build_type == "debug") {
       "//foundation/arkui/ui_lite/frameworks",
       "//foundation/arkui/ui_lite/test/framework",
       "//foundation/graphic/surface_lite/interfaces/kits",
-      "//third_party/freetype/include",
     ]
     ldflags = [
       "-lstdc++",
@@ -82,7 +81,10 @@ if (ohos_build_type == "debug") {
       "-Wl,-rpath-link=$ohos_root_path/$root_out_dir",
     ]
 
-    deps = [ "//foundation/arkui/ui_lite:ui_lite" ]
+    deps = [
+      "//foundation/arkui/ui_lite:ui_lite",
+      "//third_party/freetype:freetype",
+    ]
     output_dir = "$root_out_dir/dev_tools"
   }
 }
