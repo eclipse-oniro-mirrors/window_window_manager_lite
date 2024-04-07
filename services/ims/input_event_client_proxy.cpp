@@ -44,10 +44,13 @@ void InputEventClientProxy::ClientRequestHandle(int funcId, void* origin, IpcIo*
 
 void InputEventClientProxy::AddListener(const void* origin, IpcIo* req, IpcIo* reply)
 {
+    pthread_mutex_lock(&lock_);
     if (clientInfoMap_.size() >= MAX_CLIENT_SIZE) {
+        pthread_mutex_unlock(&lock_);
         GRAPHIC_LOGE("Exceeded the maximum number!");
         return;
     }
+    pthread_mutex_unlock(&lock_);
     pid_t pid = GetCallingPid();
     SvcIdentity svc = {0};
     bool ret = ReadRemoteObject(req, &svc);
@@ -76,12 +79,12 @@ void InputEventClientProxy::DeathCallback(void* origin)
 void InputEventClientProxy::RemoveListener(const void* origin, IpcIo* req, IpcIo* reply)
 {
     pid_t pid = GetCallingPid();
+    pthread_mutex_lock(&lock_);
     if (clientInfoMap_.count(pid) > 0) {
         ReleaseSvc(clientInfoMap_[pid].svc);
-        pthread_mutex_lock(&lock_);
         clientInfoMap_.erase(pid);
-        pthread_mutex_unlock(&lock_);
     }
+    pthread_mutex_unlock(&lock_);
 }
 
 void InputEventClientProxy::OnRawEvent(const RawEvent& event)
