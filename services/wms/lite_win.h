@@ -93,6 +93,8 @@ private:
     static void ReleaseSurface();
     void FlushWithModeCopy(const Rect& srcRect, const LiteSurfaceData* layerData, int16_t dx, int16_t dy);
     void FlushWithModeBlend(const Rect& srcRect, const LiteSurfaceData* layerData, int16_t dx, int16_t dy);
+    bool TryHardwareBlit(SurfaceBuffer* acquireBuffer, void* backBufVirAddr);
+    void DoSoftwareCopy(SurfaceBuffer* acquireBuffer, void* acquireBufVirAddr, void* backBufVirAddr);
 
     int32_t id_;
     pid_t pid_;
