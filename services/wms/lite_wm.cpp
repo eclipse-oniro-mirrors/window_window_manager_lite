@@ -662,7 +662,6 @@ LiteWindow* LiteWM::FindTargetWindow(const RawEvent& event)
 
 void LiteWM::OnRawEvent(const RawEvent& rawEvent)
 {
-    static bool firstTime = true;
     if (layerData_ == nullptr) {
         return;
     }
@@ -674,17 +673,11 @@ void LiteWM::OnRawEvent(const RawEvent& rawEvent)
         event.y = tmp;
     }
 
-    if (firstTime) {
-        if (event.type == InputDevType::INDEV_TYPE_MOUSE) {
+    if (event.type == InputDevType::INDEV_TYPE_MOUSE) {
+        if (!cursorInfo_.enableCursor) {
             cursorInfo_.enableCursor = true;
             cursorInfo_.needRedraw = true;
-        } else {
-            cursorInfo_.enableCursor = false;
         }
-        firstTime = false;
-    }
-
-    if (cursorInfo_.enableCursor) {
         SetMousePosition(event.x, event.y);
     }
 
