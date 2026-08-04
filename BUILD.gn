@@ -11,6 +11,7 @@
 
 import("//build/lite/config/component/lite_component.gni")
 import("//build/lite/ndk/ndk.gni")
+import("//drivers/peripheral/input/input.gni")
 
 lite_component("window_manager_lite") {
   features = [
@@ -101,6 +102,10 @@ executable("wms_server") {
   deps += commonDeps
   cflags = [ "-Wall" ]
   cflags_cc = cflags
+  defines = []
+  if (drivers_peripheral_input_feature_hotplug_safe_remove) {
+    defines += [ "DRIVERS_PERIPHERAL_INPUT_FEATURE_HOTPLUG_SAFE_REMOVE" ]
+  }
 
   sources += imsSources
   include_dirs += imsInclude
