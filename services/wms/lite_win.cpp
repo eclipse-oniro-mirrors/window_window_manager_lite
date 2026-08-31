@@ -117,6 +117,46 @@ void LiteWindow::Update(Rect rect)
     LiteWM::GetInstance()->UpdateWindowRegion(this, rect);
 }
 
+bool LiteWindow::TryHardwareBlit(SurfaceBuffer* acquireBuffer, void* backBufVirAddr)
+{
+#if defined(ENABLE_GFX_ENGINES) && ENABLE_GFX_ENGINES
+    uintptr_t srcPhyAddr = acquireBuffer->GetPhyAddr();
+    uintptr_t dstPhyAddr = backBuf_->GetPhyAddr();
+    LiteSurfaceData srcData;
+    LiteSurfaceData dstData;
+    srcData.width = config_.rect.GetWidth();
+    srcData.height = config_.rect.GetHeight();
+    srcData.pixelFormat = static_cast<ImagePixelFormat>(surface_->GetFormat());
+    srcData.stride = surface_->GetStride();
+    srcData.phyAddr = reinterpret_cast<uint8_t*>(srcPhyAddr);
+    dstData.width = surface_->GetWidth();
+    dstData.height = surface_->GetHeight();
+    dstData.pixelFormat = static_cast<ImagePixelFormat>(surface_->GetFormat());
+    dstData.stride = surface_->GetStride();
+    dstData.phyAddr = reinterpret_cast<uint8_t*>(dstPhyAddr);
+    Rect updateRect;
+    updateRect.SetRect(0, 0, config_.rect.GetWidth() - 1, config_.rect.GetHeight() - 1);
+    return GfxEngines::GetInstance()->GfxBlit(srcData, updateRect, dstData, 0, 0);
+#else
+    return false;
+#endif
+}
+
+void LiteWindow::DoSoftwareCopy(SurfaceBuffer* acquireBuffer, void* acquireBufVirAddr, void* backBufVirAddr)
+{
+#ifdef ARM_NEON_OPT
+    DEBUG_PERFORMANCE_TRACE("UpdateBackBuf_neon");
+    NeonMemcpy(backBufVirAddr, backBuf_->GetSize(), acquireBufVirAddr, acquireBuffer->GetSize());
+#else
+    DEBUG_PERFORMANCE_TRACE("UpdateBackBuf");
+    int32_t memcpyResult = memcpy_s(backBufVirAddr, backBuf_->GetSize(),
+        acquireBufVirAddr, acquireBuffer->GetSize());
+    if (memcpyResult != EOK) {
+        GRAPHIC_LOGE("memcpy_s error!");
+    }
+#endif
+}
+
 void LiteWindow::UpdateBackBuf()
 {
     GraphicLocker lock(backBufMutex_);
@@ -125,30 +165,29 @@ void LiteWindow::UpdateBackBuf()
     }
 
     SurfaceBuffer* acquireBuffer = surface_->AcquireBuffer();
-    if (acquireBuffer != nullptr) {
-        void* acquireBufVirAddr = acquireBuffer->GetVirAddr();
-        void* backBufVirAddr = backBuf_->GetVirAddr();
-        if (acquireBufVirAddr != nullptr && backBufVirAddr != nullptr) {
-            GRAPHIC_LOGI("memcpy, backBuf size=%d, acquireBuffer size=%d",
-                backBuf_->GetSize(), acquireBuffer->GetSize());
-#ifdef ARM_NEON_OPT
-            {
-                DEBUG_PERFORMANCE_TRACE("UpdateBackBuf_neon");
-                NeonMemcpy(backBufVirAddr, backBuf_->GetSize(), acquireBufVirAddr, acquireBuffer->GetSize());
-            }
-#else
-            {
-                DEBUG_PERFORMANCE_TRACE("UpdateBackBuf");
-                if (memcpy_s(backBufVirAddr, backBuf_->GetSize(),
-                    acquireBufVirAddr, acquireBuffer->GetSize()) != EOK) {
-                    GRAPHIC_LOGE("memcpy_s error!");
-                }
-            }
-#endif
-            GRAPHIC_LOGI("memcpy end");
-        }
-        surface_->ReleaseBuffer(acquireBuffer);
+    if (acquireBuffer == nullptr) {
+        return;
     }
+
+    void* acquireBufVirAddr = acquireBuffer->GetVirAddr();
+    void* backBufVirAddr = backBuf_->GetVirAddr();
+    if (acquireBufVirAddr == nullptr || backBufVirAddr == nullptr) {
+        surface_->ReleaseBuffer(acquireBuffer);
+        return;
+    }
+
+    GRAPHIC_LOGI("memcpy, backBuf size=%d, acquireBuffer size=%d",
+        backBuf_->GetSize(), acquireBuffer->GetSize());
+    bool ret = TryHardwareBlit(acquireBuffer, backBufVirAddr);
+    if (ret) {
+        GRAPHIC_LOGI("memcpy end");
+        surface_->ReleaseBuffer(acquireBuffer);
+        return;
+    }
+
+    DoSoftwareCopy(acquireBuffer, acquireBufVirAddr, backBufVirAddr);
+    GRAPHIC_LOGI("memcpy end");
+    surface_->ReleaseBuffer(acquireBuffer);
 }
 
 void LiteWindow::FlushWithModeCopy(const Rect& srcRect, const LiteSurfaceData* layerData, int16_t dx, int16_t dy)
@@ -232,7 +271,7 @@ void LiteWindow::Flush(const Rect& srcRect, const LiteSurfaceData* layerData, in
     }
 
     GraphicLocker lock(backBufMutex_);
-#if ENABLE_GFX_ENGINES
+#if defined(ENABLE_GFX_ENGINES) && ENABLE_GFX_ENGINES
     uintptr_t phyaddr = backBuf_->GetPhyAddr();
     if (IsCoverMode() && phyaddr) {
         LiteSurfaceData srcData;

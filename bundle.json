@@ -12,7 +12,7 @@
   "component": {
     "name": "window_manager_lite",
     "subsystem": "window",
-    "feature": [],
+    "features": [],
     "adapted_system_type": [ "small" ],
     "rom": "110KB",
     "ram": "~50KB",

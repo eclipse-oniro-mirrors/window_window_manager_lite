@@ -62,6 +62,8 @@ public:
 private:
     static InputDevType GetDeviceType(uint32_t devIndex);
     static void EventCallback(const InputEventPackage **pkgs, uint32_t count, uint32_t devIndex);
+    static void HotPlugCallback(const InputHotPlugEvent *event);
+    bool OpenDevice(uint8_t index);
     uint8_t ScanInputDevice();
     InputEventHub();
     ~InputEventHub() {}
@@ -77,6 +79,7 @@ private:
 
     static IInputInterface* inputInterface_;
     static InputEventCb callback_;
+    static InputHostCb hotPlugCallback_;
     static ReadCallback readCallback_;
 };
 } // namespace OHOS

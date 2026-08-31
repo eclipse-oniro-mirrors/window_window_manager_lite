@@ -87,9 +87,9 @@ void* InputManagerService::Distribute(void* args)
             events[i] = eventQueue_.front();
             eventQueue_.pop();
         }
-        distributer_.Distribute(events, len);
         pthread_mutex_unlock(&lock_);
         pthread_cond_signal(&nonFull_);
+        distributer_.Distribute(events, len);
     }
     return nullptr;
 }
