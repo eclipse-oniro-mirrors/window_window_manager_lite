@@ -20,7 +20,6 @@
 
 #include "gfx_utils/color.h"
 #include "gfx_utils/geometry2d.h"
-#include "isurface.h"
 #include "lite_wm_type.h"
 #include "ipc_skeleton.h"
 #include "serializer.h"
@@ -93,7 +92,7 @@ private:
     static void ReleaseSurface();
     void FlushWithModeCopy(const Rect& srcRect, const LiteSurfaceData* layerData, int16_t dx, int16_t dy);
     void FlushWithModeBlend(const Rect& srcRect, const LiteSurfaceData* layerData, int16_t dx, int16_t dy);
-    bool TryHardwareBlit(SurfaceBuffer* acquireBuffer, void* backBufVirAddr);
+    bool TryHardwareBlit(SurfaceBuffer* acquireBuffer);
     void DoSoftwareCopy(SurfaceBuffer* acquireBuffer, void* acquireBufVirAddr, void* backBufVirAddr);
 
     int32_t id_;

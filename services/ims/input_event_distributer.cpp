@@ -19,12 +19,52 @@
 namespace OHOS {
 void InputEventDistributer::Distribute(const RawEvent* events, int32_t size)
 {
+    if (events == nullptr || size <= 0) {
+        return;
+    }
+
+    // Copy a snapshot of the listeners under the lock and invoke them outside it,
+    // so that adding/removing listeners inside OnRawEvent will not deadlock or
+    // invalidate the iteration. Registering this thread in distributingThreads_
+    // lets RemoveRawEventListener wait for in-flight loops before the caller
+    // destroys a listener.
+    std::set<RawEventListener*> listeners;
+    pthread_mutex_lock(&listenersLock_);
+    listeners = rawEventListeners_;
+    distributingThreads_.insert(pthread_self());
+    pthread_mutex_unlock(&listenersLock_);
     for (int32_t i = 0; i < size; i++) {
-        for (auto listener : rawEventListeners_) {
+        for (auto listener : listeners) {
             if (listener != nullptr) {
                 listener->OnRawEvent(events[i]);
             }
         }
     }
+    pthread_mutex_lock(&listenersLock_);
+    distributingThreads_.erase(distributingThreads_.find(pthread_self()));
+    if (distributingThreads_.empty()) {
+        pthread_cond_broadcast(&listenersIdleCond_);
+    }
+    pthread_mutex_unlock(&listenersLock_);
+}
+
+void InputEventDistributer::DistributeDeviceStatus(InputDevType type, uint32_t status)
+{
+    std::set<RawEventListener*> listeners;
+    pthread_mutex_lock(&listenersLock_);
+    listeners = rawEventListeners_;
+    distributingThreads_.insert(pthread_self());
+    pthread_mutex_unlock(&listenersLock_);
+    for (auto listener : listeners) {
+        if (listener != nullptr) {
+            listener->OnDeviceStatus(type, status);
+        }
+    }
+    pthread_mutex_lock(&listenersLock_);
+    distributingThreads_.erase(distributingThreads_.find(pthread_self()));
+    if (distributingThreads_.empty()) {
+        pthread_cond_broadcast(&listenersIdleCond_);
+    }
+    pthread_mutex_unlock(&listenersLock_);
 }
 } // namespace OHOS

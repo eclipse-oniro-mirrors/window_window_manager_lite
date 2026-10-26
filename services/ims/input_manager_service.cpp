@@ -18,6 +18,12 @@
 #include "gfx_utils/graphic_log.h"
 
 namespace OHOS {
+namespace {
+void DeviceStatusCallback(InputDevType type, uint32_t status)
+{
+    InputManagerService::GetInstance()->GetDistributer()->DistributeDeviceStatus(type, status);
+}
+}
 InputEventHub* InputManagerService::hub_ = nullptr;
 InputEventDistributer InputManagerService::distributer_;
 pthread_t InputManagerService::distributerThread_ = -1;
@@ -38,6 +44,7 @@ void InputManagerService::Run()
     hub_ = InputEventHub::GetInstance();
 
     hub_->RegisterReadCallback(ReadCallback);
+    hub_->RegisterDeviceStatusCallback(DeviceStatusCallback);
     hub_->SetUp();
     distributerThreadCreated_ = pthread_create(&distributerThread_, nullptr, Distribute, nullptr);
     if (!distributerThreadCreated_) {
@@ -75,14 +82,18 @@ void InputManagerService::ReadCallback(const RawEvent* event)
 void* InputManagerService::Distribute(void* args)
 {
     GRAPHIC_LOGI("InputManagerService::Distribute Ready to read distribute!");
+    // The batch is bounded by the queue capacity (MAX_EVENT_SIZE); the buffer size
+    // must not silently rely on MAX_INPUT_DEVICE_NUM happening to be equal to it.
+    static_assert(MAX_INPUT_DEVICE_NUM >= MAX_EVENT_SIZE, "event batch buffer too small");
+    constexpr int32_t maxEventBatch = MAX_EVENT_SIZE;
     while (true) {
         pthread_mutex_lock(&lock_);
         while (eventQueue_.size() == 0) {
             pthread_cond_wait(&nonEmpty_, &lock_);
         }
         // pop events from queue
-        RawEvent events[MAX_INPUT_DEVICE_NUM];
-        int32_t len = (eventQueue_.size() > MAX_EVENT_SIZE) ? MAX_EVENT_SIZE : eventQueue_.size();
+        RawEvent events[maxEventBatch];
+        int32_t len = (eventQueue_.size() > maxEventBatch) ? maxEventBatch : eventQueue_.size();
         for (int32_t i = 0; i < len; i++) {
             events[i] = eventQueue_.front();
             eventQueue_.pop();

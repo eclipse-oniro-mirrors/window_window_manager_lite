@@ -80,6 +80,7 @@ public:
     LiteWindow* FindTargetWindow(const RawEvent& event);
 
     void OnRawEvent(const RawEvent& rawEvent) override;
+    void OnDeviceStatus(InputDevType type, uint32_t status) override;
 
     void Screenshot();
     bool OnScreenshot(Surface* surface);

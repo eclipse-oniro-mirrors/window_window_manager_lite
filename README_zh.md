@@ -70,7 +70,8 @@ hb build window_manager_lite
 
 1. 新增输入设备热插拔支持
     -   在 `services/ims/input_event_hub.h`、`services/ims/input_event_hub.cpp` 中新增 `HotPlugCallback` 回调与 `hotPlugCallback_` 成员：设备上线时自动重新打开并注册上报回调，设备下线时清理对应设备位；下线处理可配合输入驱动的安全移除接口（`RemoveDisconnectedInputDevice`，由 `DRIVERS_PERIPHERAL_INPUT_FEATURE_HOTPLUG_SAFE_REMOVE` 宏控制）。
-    -   `SetUp` 中新增注册热插拔回调，`TearDown` 中新增注销热插拔回调。
+    -   `SetUp` 中新增注册热插拔回调（先扫描并打开设备、最后注册回调），`TearDown` 中新增注销热插拔回调。
+    -   设备上下线状态经 `InputEventHub::RegisterDeviceStatusCallback` → `InputEventDistributer::DistributeDeviceStatus` 通知上层（如 WMS 在鼠标下线时关闭光标）。
 
 2. 新增窗口后缓冲硬件搬运能力
     -   在 `services/wms/lite_win.h`、`services/wms/lite_win.cpp` 中新增 `TryHardwareBlit`：当使能 `ENABLE_GFX_ENGINES` 且收发缓冲均具备物理地址时，优先使用硬件图形引擎完成后备缓冲更新，失败回退软件拷贝。
@@ -95,7 +96,7 @@ hb build window_manager_lite
 
 4. 原有鼠标光标显示逻辑增强
     -   原有功能：`LiteWM::OnRawEvent` 使用 `firstTime` 静态标记，仅当第一帧鼠标事件到来时开启光标，其后非鼠标事件不会关闭光标。
-    -   本次增强：改为按事件类型实时判定，鼠标事件按光标开关状态按需置位并重绘，非鼠标事件不再误开光标。
+    -   本次增强：改为按事件类型实时判定——在收到第一个鼠标事件时开启光标并置 `needRedraw`，其后由 `UpdateMouseCursor` 按位置变化触发重绘，非鼠标事件不再误开光标；同时补齐光标关闭路径，鼠标设备下线时经设备状态通知关闭光标并重绘光标所在区域（见「新增能力 1」的设备状态通知）。
 
 5. 原有硬件合成条件判断增强
     -   原有功能：`LiteWindow::Flush` 使用 `#if ENABLE_GFX_ENGINES` 判断，未定义宏时按 0 处理。

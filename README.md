@@ -70,7 +70,8 @@ This repository is adapted for the HiSpark AiFly (Hi3403V100) development board.
 
 1. Added input device hot-plug support
     -   Added the `HotPlugCallback` callback and the `hotPlugCallback_` member in `services/ims/input_event_hub.h` and `services/ims/input_event_hub.cpp`: when a device comes online, it is re-opened and its report callback is registered automatically; when it goes offline, the corresponding device bit is cleared. The offline path can cooperate with the input driver's safe-remove API (`RemoveDisconnectedInputDevice`, controlled by the `DRIVERS_PERIPHERAL_INPUT_FEATURE_HOTPLUG_SAFE_REMOVE` macro).
-    -   `SetUp` now registers the hot-plug callback, and `TearDown` unregisters it.
+    -   `SetUp` now registers the hot-plug callback (devices are scanned and opened first, and the callback is registered last), and `TearDown` unregisters it.
+    -   Device online/offline status is reported to the upper layer via `InputEventHub::RegisterDeviceStatusCallback` -> `InputEventDistributer::DistributeDeviceStatus` (e.g. WMS hides the mouse pointer when the mouse goes offline).
 
 2. Added hardware copy for the window back buffer
     -   Added `TryHardwareBlit` in `services/wms/lite_win.h` and `services/wms/lite_win.cpp`: when `ENABLE_GFX_ENGINES` is enabled and both buffers have physical addresses, the back-buffer update prefers the hardware graphics engine and falls back to software copy on failure.
@@ -95,7 +96,7 @@ This repository is adapted for the HiSpark AiFly (Hi3403V100) development board.
 
 4. The existing mouse pointer display logic is enhanced
     -   Original functionality: `LiteWM::OnRawEvent` used a static `firstTime` flag, enabling the pointer only on the first mouse event; non-mouse events afterwards never disabled it.
-    -   Enhancement: the event type is now checked per event; mouse events enable and redraw the pointer only when needed, and non-mouse events no longer turn the pointer on by mistake.
+    -   Enhancement: the event type is now checked per event — the pointer is enabled with `needRedraw` set on the first mouse event, and later redraws are triggered by `UpdateMouseCursor` when the position changes; non-mouse events no longer turn the pointer on by mistake. A pointer-off path is also added: when the mouse device goes offline, the device status notification disables the pointer and redraws the area it occupied (see the device status notification in Added Features 1).
 
 5. The existing hardware composition condition check is enhanced
     -   Original functionality: `LiteWindow::Flush` used `#if ENABLE_GFX_ENGINES`, treating an undefined macro as 0.

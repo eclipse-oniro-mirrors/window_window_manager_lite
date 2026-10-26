@@ -117,25 +117,42 @@ void LiteWindow::Update(Rect rect)
     LiteWM::GetInstance()->UpdateWindowRegion(this, rect);
 }
 
-bool LiteWindow::TryHardwareBlit(SurfaceBuffer* acquireBuffer, void* backBufVirAddr)
+bool LiteWindow::TryHardwareBlit(SurfaceBuffer* acquireBuffer)
 {
 #if defined(ENABLE_GFX_ENGINES) && ENABLE_GFX_ENGINES
+    // Precondition of the hardware path: both buffers must have physical addresses.
     uintptr_t srcPhyAddr = acquireBuffer->GetPhyAddr();
     uintptr_t dstPhyAddr = backBuf_->GetPhyAddr();
-    LiteSurfaceData srcData;
-    LiteSurfaceData dstData;
-    srcData.width = config_.rect.GetWidth();
-    srcData.height = config_.rect.GetHeight();
+    if (srcPhyAddr == 0 || dstPhyAddr == 0) {
+        GRAPHIC_LOGI("physical address unavailable, fallback to software copy");
+        return false;
+    }
+
+    // The acquire buffer and the back buffer are both allocated by surface_, so use
+    // the surface geometry consistently for both sides. If the window config no
+    // longer matches the surface size (e.g. resize in progress), fall back to
+    // software copy instead of blitting with mismatched dimensions.
+    if (config_.rect.GetWidth() != surface_->GetWidth() || config_.rect.GetHeight() != surface_->GetHeight()) {
+        GRAPHIC_LOGI("window size != surface size, fallback to software copy");
+        return false;
+    }
+
+    // Note on cache/DMA coherency: the lite surface does not expose cache
+    // maintenance APIs. This path requires the buffers with physical addresses to
+    // be non-cacheable or cache-coherent for CPU and the GFX engine, so that the
+    // data written by the engine via the physical address is visible to the CPU
+    // reads in FlushWithModeCopy/FlushWithModeBlend.
+    LiteSurfaceData srcData = {};
+    LiteSurfaceData dstData = {};
+    srcData.width = surface_->GetWidth();
+    srcData.height = surface_->GetHeight();
     srcData.pixelFormat = static_cast<ImagePixelFormat>(surface_->GetFormat());
     srcData.stride = surface_->GetStride();
     srcData.phyAddr = reinterpret_cast<uint8_t*>(srcPhyAddr);
-    dstData.width = surface_->GetWidth();
-    dstData.height = surface_->GetHeight();
-    dstData.pixelFormat = static_cast<ImagePixelFormat>(surface_->GetFormat());
-    dstData.stride = surface_->GetStride();
+    dstData = srcData;
     dstData.phyAddr = reinterpret_cast<uint8_t*>(dstPhyAddr);
     Rect updateRect;
-    updateRect.SetRect(0, 0, config_.rect.GetWidth() - 1, config_.rect.GetHeight() - 1);
+    updateRect.SetRect(0, 0, srcData.width - 1, srcData.height - 1);
     return GfxEngines::GetInstance()->GfxBlit(srcData, updateRect, dstData, 0, 0);
 #else
     return false;
@@ -178,7 +195,7 @@ void LiteWindow::UpdateBackBuf()
 
     GRAPHIC_LOGI("memcpy, backBuf size=%d, acquireBuffer size=%d",
         backBuf_->GetSize(), acquireBuffer->GetSize());
-    bool ret = TryHardwareBlit(acquireBuffer, backBufVirAddr);
+    bool ret = TryHardwareBlit(acquireBuffer);
     if (ret) {
         GRAPHIC_LOGI("memcpy end");
         surface_->ReleaseBuffer(acquireBuffer);
@@ -274,7 +291,7 @@ void LiteWindow::Flush(const Rect& srcRect, const LiteSurfaceData* layerData, in
 #if defined(ENABLE_GFX_ENGINES) && ENABLE_GFX_ENGINES
     uintptr_t phyaddr = backBuf_->GetPhyAddr();
     if (IsCoverMode() && phyaddr) {
-        LiteSurfaceData srcData;
+        LiteSurfaceData srcData = {};
         srcData.width = surface_->GetWidth();
         srcData.height = surface_->GetHeight();
         srcData.pixelFormat = (ImagePixelFormat)surface_->GetFormat();

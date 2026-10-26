@@ -18,6 +18,7 @@
 #include "gfx_utils/color.h"
 #include "gfx_utils/graphic_log.h"
 #include "gfx_utils/pixel_format_utils.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace {
@@ -687,6 +688,26 @@ void LiteWM::OnRawEvent(const RawEvent& rawEvent)
     }
 
     SetEventData(targetWindow, event);
+}
+
+void LiteWM::OnDeviceStatus(InputDevType type, uint32_t status)
+{
+    if (layerData_ == nullptr || type != InputDevType::INDEV_TYPE_MOUSE) {
+        return;
+    }
+    if (status != 1) { // 1: offline
+        return;
+    }
+
+    // The mouse is unplugged: hide the cursor and redraw the area it occupied,
+    // otherwise a frozen cursor would remain on the screen.
+    GraphicLocker lock(stackLock_);
+    if (!cursorInfo_.enableCursor) {
+        return;
+    }
+    AddUpdateRegion(cursorInfo_.rect);
+    cursorInfo_.enableCursor = false;
+    cursorInfo_.needRedraw = false;
 }
 
 bool LiteWM::OnScreenshot(Surface* surface)
