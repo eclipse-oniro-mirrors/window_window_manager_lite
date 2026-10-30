@@ -18,6 +18,7 @@
 #include "gfx_utils/color.h"
 #include "gfx_utils/graphic_log.h"
 #include "gfx_utils/pixel_format_utils.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace {
@@ -662,7 +663,6 @@ LiteWindow* LiteWM::FindTargetWindow(const RawEvent& event)
 
 void LiteWM::OnRawEvent(const RawEvent& rawEvent)
 {
-    static bool firstTime = true;
     if (layerData_ == nullptr) {
         return;
     }
@@ -674,17 +674,11 @@ void LiteWM::OnRawEvent(const RawEvent& rawEvent)
         event.y = tmp;
     }
 
-    if (firstTime) {
-        if (event.type == InputDevType::INDEV_TYPE_MOUSE) {
+    if (event.type == InputDevType::INDEV_TYPE_MOUSE) {
+        if (!cursorInfo_.enableCursor) {
             cursorInfo_.enableCursor = true;
             cursorInfo_.needRedraw = true;
-        } else {
-            cursorInfo_.enableCursor = false;
         }
-        firstTime = false;
-    }
-
-    if (cursorInfo_.enableCursor) {
         SetMousePosition(event.x, event.y);
     }
 
@@ -694,6 +688,26 @@ void LiteWM::OnRawEvent(const RawEvent& rawEvent)
     }
 
     SetEventData(targetWindow, event);
+}
+
+void LiteWM::OnDeviceStatus(InputDevType type, uint32_t status)
+{
+    if (layerData_ == nullptr || type != InputDevType::INDEV_TYPE_MOUSE) {
+        return;
+    }
+    if (status != 1) { // 1: offline
+        return;
+    }
+
+    // The mouse is unplugged: hide the cursor and redraw the area it occupied,
+    // otherwise a frozen cursor would remain on the screen.
+    GraphicLocker lock(stackLock_);
+    if (!cursorInfo_.enableCursor) {
+        return;
+    }
+    AddUpdateRegion(cursorInfo_.rect);
+    cursorInfo_.enableCursor = false;
+    cursorInfo_.needRedraw = false;
 }
 
 bool LiteWM::OnScreenshot(Surface* surface)

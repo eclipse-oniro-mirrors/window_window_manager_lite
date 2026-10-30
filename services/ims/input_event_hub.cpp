@@ -15,6 +15,7 @@
 
 #include "input_event_hub.h"
 #include "gfx_utils/graphic_log.h"
+#include "input-event-codes.h"
 
 namespace OHOS {
 namespace {
@@ -23,8 +24,10 @@ const uint32_t MOUSE_DEV_ID = 2;
 const uint32_t UNKNOW_DEV_ID = 32;
 }
 IInputInterface* InputEventHub::inputInterface_ = nullptr;
-InputEventCb InputEventHub::callback_ = { 0 };
+InputEventCb InputEventHub::callback_ = {};
+InputHostCb InputEventHub::hotPlugCallback_ = {};
 InputEventHub::ReadCallback InputEventHub::readCallback_ = nullptr;
+InputEventHub::DeviceStatusCallback InputEventHub::deviceStatusCallback_ = nullptr;
 
 InputEventHub* InputEventHub::GetInstance()
 {
@@ -54,66 +57,108 @@ void InputEventHub::SetUp()
         GRAPHIC_LOGE("get input driver interface failed!");
         return;
     }
+    if (inputInterface_ == nullptr || inputInterface_->iInputManager == nullptr ||
+        inputInterface_->iInputReporter == nullptr) {
+        GRAPHIC_LOGE("input interface or input manager is nullptr!");
+        return;
+    }
+
+    // Scan and open devices before registering the hot-plug callback, so that
+    // mountDevIndex_ is not modified concurrently by the driver thread while SetUp
+    // is still filling it in.
     uint8_t num = ScanInputDevice();
     if (num == 0) {
         GRAPHIC_LOGE("There is no device!");
         return;
     }
     for (uint8_t i = 0; i < num; i++) {
-        if (inputInterface_ == nullptr || inputInterface_->iInputManager == nullptr) {
-            GRAPHIC_LOGE("input interface or input manager is nullptr, open device failed!");
-            return;
+        if (!OpenDevice(i)) {
+            GRAPHIC_LOGE("open input device failed, dev=%u", mountDevIndex_[i]);
         }
-        ret = inputInterface_->iInputManager->OpenInputDevice(mountDevIndex_[i]);
-        if (ret == INPUT_SUCCESS && inputInterface_->iInputReporter != nullptr) {
-            callback_.EventPkgCallback = EventCallback;
-            ret = inputInterface_->iInputReporter->RegisterReportCallback(mountDevIndex_[i], &callback_);
-            if (ret != INPUT_SUCCESS) {
-                GRAPHIC_LOGE("device dose not exist, can't register callback to it!");
-                return;
-            }
-            openDev_ = openDev_ | (1 << i);
+    }
+
+    hotPlugCallback_ = {};
+    hotPlugCallback_.HotPlugCallback = HotPlugCallback;
+    ret = inputInterface_->iInputReporter->RegisterHotPlugCallback(&hotPlugCallback_);
+    if (ret != INPUT_SUCCESS) {
+        GRAPHIC_LOGE("register input hotplug callback failed!");
+    }
+}
+
+bool InputEventHub::OpenDevice(uint8_t index)
+{
+    if (index >= MAX_INPUT_DEVICE_NUM || inputInterface_ == nullptr || inputInterface_->iInputManager == nullptr ||
+        inputInterface_->iInputReporter == nullptr) {
+        return false;
+    }
+
+    const uint32_t devIndex = mountDevIndex_[index];
+    if (inputInterface_->iInputManager->OpenInputDevice(devIndex) != INPUT_SUCCESS) {
+        return false;
+    }
+
+    callback_.EventPkgCallback = EventCallback;
+    if (inputInterface_->iInputReporter->RegisterReportCallback(devIndex, &callback_) != INPUT_SUCCESS) {
+        (void)inputInterface_->iInputManager->CloseInputDevice(devIndex);
+        return false;
+    }
+
+    openDev_ |= (1U << index);
+    return true;
+}
+
+void InputEventHub::CloseDevice(uint8_t index, bool disconnected)
+{
+    // Test-and-clear the device bit atomically: only the path that succeeds in
+    // clearing the bit performs the cleanup, so TearDown and HotPlugCallback will
+    // never close the same device twice.
+    uint32_t expected = openDev_.load();
+    while ((expected & (1U << index)) != 0) {
+        if (openDev_.compare_exchange_weak(expected, expected & ~(1U << index))) {
+            break;
         }
+    }
+
+    if (inputInterface_ == nullptr || inputInterface_->iInputManager == nullptr ||
+        inputInterface_->iInputReporter == nullptr) {
+        GRAPHIC_LOGE("input interface or input manager is nullptr, skip closing device!");
+        return;
+    }
+
+    const uint32_t devIndex = mountDevIndex_[index];
+#ifdef DRIVERS_PERIPHERAL_INPUT_FEATURE_HOTPLUG_SAFE_REMOVE
+    // With the safe-remove feature enabled, the driver has already destroyed the
+    // device vnode before reporting offline. CloseInputDevice would recycle the HDF
+    // service and race with the vnode reclamation; RemoveDisconnectedInputDevice
+    // only unregisters the listener and releases the node, which is safe here.
+    if (disconnected && inputInterface_->iInputManager->RemoveDisconnectedInputDevice != nullptr) {
+        if (inputInterface_->iInputManager->RemoveDisconnectedInputDevice(devIndex) != INPUT_SUCCESS) {
+            GRAPHIC_LOGE("remove disconnected input device failed, dev=%u", devIndex);
+        }
+        return;
+    }
+#endif
+    if (inputInterface_->iInputReporter->UnregisterReportCallback(devIndex) != INPUT_SUCCESS) {
+        GRAPHIC_LOGE("Unregister callback failed!");
+    }
+    if (inputInterface_->iInputManager->CloseInputDevice(devIndex) != INPUT_SUCCESS) {
+        GRAPHIC_LOGE("Unmount device failed!");
     }
 }
 
 void InputEventHub::TearDown()
 {
-    int32_t ret = 0;
     for (uint8_t i = 0; i < MAX_INPUT_DEVICE_NUM; i++) {
-        if ((openDev_ & (1 << i)) == 0) {
-            continue;
-        }
-        if (inputInterface_ == nullptr) {
-            GRAPHIC_LOGE("input interface point is nullptr!");
-            return;
-        }
-        if (inputInterface_->iInputReporter == nullptr || inputInterface_->iInputManager == nullptr) {
-            GRAPHIC_LOGE("input interface or input manager is nullptr, open device failed!");
-            return;
-        }
-        ret = inputInterface_->iInputReporter->UnregisterReportCallback(mountDevIndex_[i]);
-        if (ret != INPUT_SUCCESS) {
-            GRAPHIC_LOGE("Unregister callback failed!");
-        }
-        ret  = inputInterface_->iInputManager->CloseInputDevice(mountDevIndex_[i]);
-        if (ret != INPUT_SUCCESS) {
-            GRAPHIC_LOGE("Unmount device failed!");
-        }
-        openDev_ = openDev_ & ~(1 << i);
+        CloseDevice(i, false);
     }
 
     if (inputInterface_ != nullptr) {
-        if (inputInterface_->iInputManager != nullptr) {
-            free(inputInterface_->iInputManager);
+        if (inputInterface_->iInputReporter != nullptr &&
+            inputInterface_->iInputReporter->UnregisterHotPlugCallback != nullptr) {
+            (void)inputInterface_->iInputReporter->UnregisterHotPlugCallback();
         }
-        if (inputInterface_->iInputReporter != nullptr) {
-            free(inputInterface_->iInputReporter);
-        }
-        if (inputInterface_->iInputController != nullptr) {
-            free(inputInterface_->iInputController);
-        }
-        free(inputInterface_);
+        hotPlugCallback_ = {};
+        ReleaseInputInterface(&inputInterface_);
         inputInterface_ = nullptr;
     }
 }
@@ -153,6 +198,37 @@ void InputEventHub::EventCallback(const InputEventPackage **pkgs, uint32_t count
     }
 
     readCallback_(&data);
+}
+
+void InputEventHub::HotPlugCallback(const InputHotPlugEvent *event)
+{
+    if (event == nullptr) {
+        return;
+    }
+
+    InputEventHub* hub = GetInstance();
+    for (uint8_t i = 0; i < MAX_INPUT_DEVICE_NUM; i++) {
+        // Skip idle slots filled with the sentinel value.
+        if (hub->mountDevIndex_[i] == UNKNOW_DEV_ID || hub->mountDevIndex_[i] != event->devIndex) {
+            continue;
+        }
+
+        if (event->status == 1) { // 1: offline
+            hub->CloseDevice(i, true);
+            GRAPHIC_LOGI("input device offline, dev=%u", event->devIndex);
+        } else if (event->status == 0 && (hub->openDev_.load() & (1U << i)) == 0) { // 0: online
+            if (!hub->OpenDevice(i)) {
+                GRAPHIC_LOGE("recover input device failed, dev=%u", event->devIndex);
+            }
+        }
+        break;
+    }
+
+    // Notify the upper layer about the device status change (e.g. WMS hides the
+    // mouse cursor when the mouse goes offline).
+    if (deviceStatusCallback_ != nullptr) {
+        deviceStatusCallback_(GetDeviceType(event->devIndex), event->status);
+    }
 }
 
 InputDevType InputEventHub::GetDeviceType(uint32_t devIndex)

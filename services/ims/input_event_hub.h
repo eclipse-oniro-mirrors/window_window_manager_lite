@@ -16,11 +16,11 @@
 #ifndef GRAPHIC_LITE_INPUT_EVENT_HUB_H
 #define GRAPHIC_LITE_INPUT_EVENT_HUB_H
 
-#include <map>
+#include <atomic>
 #include "gfx_utils/input_event_info.h"
-#include "input-event-codes.h"
-#include "input_manager.h"
-#include "securec.h"
+#include "input_manager.h" // iInputManager / IInputReporter aggregate table
+#include "input_reporter.h" // RegisterHotPlugCallback / UnregisterHotPlugCallback
+#include "input_type.h" // InputHostCb / InputHotPlugEvent
 
 namespace OHOS {
 /**
@@ -28,6 +28,7 @@ namespace OHOS {
  */
 class InputEventHub {
 using ReadCallback = void (*)(const RawEvent*);
+using DeviceStatusCallback = void (*)(InputDevType, uint32_t);
 public:
     static InputEventHub* GetInstance();
 
@@ -59,9 +60,29 @@ public:
         return 0;
     }
 
+    /**
+     * @brief Registration device status callback, invoked on hot-plug events.
+     *
+     * @param [in] callback callback of device status. type: device type,
+     *                      status: 1 offline, 0 online.
+     *
+     * @returns return -1: register callback failed; return 0: register success.
+     */
+    static int32_t RegisterDeviceStatusCallback(const DeviceStatusCallback &callback)
+    {
+        if (callback == nullptr) {
+            return -1;
+        }
+        deviceStatusCallback_ = callback;
+        return 0;
+    }
+
 private:
     static InputDevType GetDeviceType(uint32_t devIndex);
     static void EventCallback(const InputEventPackage **pkgs, uint32_t count, uint32_t devIndex);
+    static void HotPlugCallback(const InputHotPlugEvent *event);
+    bool OpenDevice(uint8_t index);
+    void CloseDevice(uint8_t index, bool disconnected);
     uint8_t ScanInputDevice();
     InputEventHub();
     ~InputEventHub() {}
@@ -72,12 +93,14 @@ private:
     InputEventHub& operator=(InputEventHub&&) = delete;
 
     uint32_t mountDevIndex_[MAX_INPUT_DEVICE_NUM];
-    uint32_t openDev_;
+    std::atomic<uint32_t> openDev_;
     RawEvent data_;
 
     static IInputInterface* inputInterface_;
     static InputEventCb callback_;
+    static InputHostCb hotPlugCallback_;
     static ReadCallback readCallback_;
+    static DeviceStatusCallback deviceStatusCallback_;
 };
 } // namespace OHOS
 #endif
