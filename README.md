@@ -15,8 +15,6 @@ The graphics service uses the client/server \(C/S\) architecture and is divided 
 -   WMS: Manages and combines windows of different applications in a unified manner. Each window is bound to a  **RootView**  object.
 -   IMS: Connects to the underlying input event driver framework to monitor and distribute input events.
 
-In addition, this component provides the following capabilities for the HiSpark AiFly \(Hi3403V100\) development board:
-
 -   Input device hot-plug: the IMS listens to the device online/offline events reported by the input driver, re-opens the device and registers its report callback when the device comes online, and cleans up the device when it goes offline; the status is also forwarded to the WMS, which disables the mouse pointer so that a frozen pointer does not stay on the screen. For the safe-remove case, the `RemoveDisconnectedInputDevice` API of the input driver is used when the `DRIVERS_PERIPHERAL_INPUT_FEATURE_HOTPLUG_SAFE_REMOVE` switch is enabled; both the API and the switch have to be provided by the driver repository.
 -   Hardware back-buffer copy: when `ENABLE_GFX_ENGINES` is enabled, the back buffer is updated by the hardware graphics engine first, and falls back to a software copy when a buffer has no physical address, when the window size does not match the surface size, or when the hardware copy fails.
 -   Input event handling optimization: events are dequeued in a batch and the lock is released before distribution, which shortens the critical path; the device opening flow validates its arguments and interface pointers, and a single device failure no longer aborts the initialization of the remaining devices.
